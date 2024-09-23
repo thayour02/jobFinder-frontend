@@ -6,11 +6,7 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {
-      fontFamily:{
-        title:["Jost"," sans-serif"]
-      }
-    },
+    extend: {}
   },
   plugins: [],
 }

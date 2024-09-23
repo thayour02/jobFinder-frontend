@@ -24,8 +24,9 @@ export default function Company() {
     const { searchQuery, setSearchQuery,cmpLocation, setCmpLocation} = useContext(GlobalContext)
     const { numPage, setNumPage, } = useContext(GlobalContext)
 
-
-
+    const handleShowMore = async()=>{
+        setPage((prev)=> prev+1)
+    }
     const fetchCompany = async () => {
         setIsFetching(true)
         const newURL = updateUrl({
@@ -49,18 +50,13 @@ export default function Company() {
             return toast(error)
         }
     }
-
+    useEffect(() => {
+        fetchCompany()
+    })
     const handleSearchSubmit = async (e)=>{
         e.preventDefault()
       await fetchCompany() 
     }
-    const handleShowMore = async()=>{
-        setPage((prev)=> prev+1)
-    }
-
-    useEffect(() => {
-        fetchCompany()
-    }, [page, sort,cmpLocation])
     return (
         <div className="container -mb-40 bg-purple-100 mx-auto px-4 py-10  md:px-4  pt-20">
             <h2 className="text-3xl font-bold mb-2 pt-10">Companies looking for Professionals</h2>

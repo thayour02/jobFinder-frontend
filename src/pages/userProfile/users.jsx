@@ -58,7 +58,7 @@ export default function User() {
 
     useEffect(() => {
         fetchUser()
-    }, [page, sort,cmpLocation])
+    })
     return (
         <div className="container bg-purple-100 mx-auto px-4 py-10  md:px-4 ">
             <h2 className="text-3xl font-bold mb-2">Remote Companies</h2>

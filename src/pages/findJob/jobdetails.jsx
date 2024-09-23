@@ -158,11 +158,10 @@ export default function Jobdetails() {
       console.log(error)
     }
   }
-  console.log(similarJob)
   useEffect(() => {
     id && getJobDetails()
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-  }, [id])
+  })
 
 
   const fetchApplications = async () => {
@@ -179,7 +178,7 @@ export default function Jobdetails() {
   }
   useEffect(() => {
     id && fetchApplications()
-  }, [id])
+  })
 
 
   const handleDeletePost = async () => {

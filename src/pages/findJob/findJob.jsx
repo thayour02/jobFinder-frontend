@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react"
+import { useState, useContext, useEffect, useCallback } from "react"
 import { useLocation, useNavigate } from "react-router-dom";
 import Head from "../../component/header";
 import { BiBriefcaseAlt2 } from "react-icons/bi";
@@ -29,7 +29,7 @@ export default function FindJob() {
 
 
   // fetchJob
-  const fetchJob = async () => {
+  const fetchJob = useCallback(async () => {
     setIsFetching(true)
     const newURL = updateUrl({
       pageNum: page,
@@ -56,11 +56,12 @@ export default function FindJob() {
     } catch (error) {
       setIsFetching(false)
       console.log(error)
-    }
-  }
+    }},[page, searchQuery, cmpLocation, sort, filterJobTypes, filterExp, navigate, location])
+  
+
   useEffect(() => {
     fetchJob()
-  }, [sort, filterJobTypes, filterExp, page,]);
+  }, [fetchJob]);
 
   //FILTERJOBTYPES
   const filterJob = async (e) => {

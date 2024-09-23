@@ -27,7 +27,7 @@ export default function Application() {
   }
   useEffect(() => {
     id && fetchApplications()
-  }, [id])
+  })
   return (
     <div className='w-full flex flex-col pt-20 h-screen'>
       <p className='font-bold text-2xl'>Applicants:</p>

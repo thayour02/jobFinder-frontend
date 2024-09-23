@@ -207,7 +207,7 @@ export default function CompanyProfile() {
     useEffect(() => {
         fetchCompany();
         window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-    }, [])
+    })
     if (loading) {
         <Loading />
     }

@@ -12,20 +12,18 @@ import { BsPersonFill } from "react-icons/bs";
 import { FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import NoProfile from '../../assets/images.jpeg'
-import { toast } from "react-hot-toast"
 import { useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import CustomButton from '../../component/customButton'
-import { useState, useDispatch } from 'react'
 import { FcApproval } from "react-icons/fc";
 import { MdOutlineVerified } from "react-icons/md"
 
 
 const Applicants = () => {
-    const { loading, setLoading } = useContext(GlobalContext)
+    const { loading} = useContext(GlobalContext)
     const { info, setInfo } = useContext(GlobalContext)
-    const { status, setStatus } = useContext(GlobalContext)
-    const { infoo, setInfoo } = useContext(GlobalContext)
+    const {  setStatus } = useContext(GlobalContext)
+    const {  setInfoo } = useContext(GlobalContext)
 
 
     const { user } = useSelector((state) => state.user)
@@ -38,7 +36,6 @@ const Applicants = () => {
                 method: "GET",
                 token: user?.token
             })
-            console.log(response)
             setInfo(response)
         } catch (error) {
             return error

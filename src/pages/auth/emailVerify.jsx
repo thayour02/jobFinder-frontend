@@ -20,41 +20,42 @@ const VerifyEmail = () => {
   const { token, id } = useParams()
 
 
-  const verifyEmail = async () => {
-    let URL = null
-    if (isRegister && accountType !== "Seeker") {
-      URL = `/user/verify-email/${id}/${token}`
-    } else {
-      URL = `/verify-user/${id}/${token}`
-    }
-    
-    setLoading(true)
-    try {
-      let response = await apiRequest({
-        url: URL,
-        method: "GET",
-      })
-
-      if (response.success === true) {
-        setVerified(response.user.isVerified);;
-        setMessage(response.message);
-        toast.success(response.message);
-        setLoading(false)
-
-        // Set timeout to dispatch to home page
-        setTimeout(() => {
-          window.location.replace('/find-jobs')
-        }, 1500); // 1500ms = 1.5s
-      }
-    } catch (error) {
-      setMessage(error);
-      setLoading(false)
-    }
-  };
+  
 
   useEffect(() => {
+    const verifyEmail = async () => {
+      let URL = null
+      if (isRegister && accountType !== "Seeker") {
+        URL = `/user/verify-email/${id}/${token}`
+      } else {
+        URL = `/verify-user/${id}/${token}`
+      }
+      
+      setLoading(true)
+      try {
+        let response = await apiRequest({
+          url: URL,
+          method: "GET",
+        })
+  
+        if (response.success === true) {
+          setVerified(response.user.isVerified);;
+          setMessage(response.message);
+          toast.success(response.message);
+          setLoading(false)
+  
+          // Set timeout to dispatch to home page
+          setTimeout(() => {
+            window.location.replace('/find-jobs')
+          }, 1500); // 1500ms = 1.5s
+        }
+      } catch (error) {
+        setMessage(error);
+        setLoading(false)
+      }
+    };
     verifyEmail();
-  }, [token, id, accountType, dispatch, navigate]);
+  }, [token, id, accountType, dispatch, navigate,setLoading,isRegister]);
 
   return (
     <div className='pt-40 h-screen bg-purple-200'>
