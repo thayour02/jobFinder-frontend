@@ -26,7 +26,7 @@ function Layout() {
   return user?.token ? (
     <Outlet />
   ) : (
-    <Navigate to='/auth' state={{ from: location }} replace />
+    <Navigate to='/Home' state={{ from: location }} replace />
   );
 }
 
