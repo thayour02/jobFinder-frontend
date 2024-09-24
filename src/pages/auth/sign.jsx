@@ -57,7 +57,6 @@ const SignUp = () => {
             if (res?.status === false) {
                 toast.error(res?.message)
                 setLoading(false)
-               
             } else{
                 if(isRegister){
                 const data = { token: res?.token, ...res?.user };
@@ -77,7 +76,7 @@ const SignUp = () => {
                 }
             }
         } catch (error) {
-            console.log(error)
+             return error
         }
     };
     return (
@@ -116,7 +115,6 @@ const SignUp = () => {
                                 Company
                             </button>
                         </div>
-
                         <form
                             className='w-full flex flex-col gap-5'
                             onSubmit={handleSubmit(onSubmit)}
