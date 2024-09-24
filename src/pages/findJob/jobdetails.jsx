@@ -394,7 +394,7 @@ export default function Jobdetails() {
                 </div>
               </div>
               : <div className="w-full md:w-1/3 2xl:w-2/4 p-5 mt-10 md:mt-0">
-                <p className="text-gray-500 text-2xl font-bold">Similar Job :</p>
+                <p className="text-gray-500 text-2xl font-bold">Similar Job:</p>
                 <div className="md:flex-row flex flex-wrap  gap-3">
                   {similarJob?.slice(0, 4).map((job, index) => {
                     const data = {
