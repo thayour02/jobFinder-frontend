@@ -22,11 +22,10 @@ import Applicants from "./pages/userProfile/applicants.jsx";
 function Layout() {
   const { user } = useSelector((state) => state.user);
   const location = useLocation();
-
-  return user?.token ? (
+  return user?.token ?(
     <Outlet />
   ) : (
-    <Navigate to='/Home' state={{ from: location }} replace />
+    <Navigate to='/auth' state={{ from: location }} replace />
   );
 }
 
@@ -37,12 +36,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route element={<Layout />}>
-          <Route
-           path='/' 
-           element={<Navigate to='/auth' replace={true} />}
-          />
-          <Route path="/user-profile" element={<UserProfile />}
-          />
+          <Route path='/' element={<Navigate to='/auth' replace={true} />} />
+          <Route path="/user-profile" element={<UserProfile />}/>
           <Route path={"/user-profile/:id"} element={<UserProfileId />} />
           <Route path={"/company-profile"} element={<CompanyProfile />} />
           <Route path={"/company-profile/:id"} element={<CompanyProfile />} />
