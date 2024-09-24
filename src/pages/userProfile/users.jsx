@@ -62,7 +62,7 @@ export default function User() {
 
     
     return (
-        <div className="container bg-purple-100 mx-auto px-4 py-10  md:px-4 ">
+        <div className="container -mb-40 bg-purple-100 mx-auto px-4 py-10  md:px-4  pt-20">
             <h2 className="text-3xl font-bold mb-2">Remote Companies</h2>
             <p className="font-semibold mb-4">Dive into our comprehensive collection of remote companies.</p>
                 <div className="mb-10 md:mb-1">
@@ -90,7 +90,7 @@ export default function User() {
                     <AiOutlineLoading3Quarters size={100} className="align-items-center animate-spin" />
                 </div> : <div className="w-full flex flex-col">
                     {data?.map((com, index) => (
-                            <div key={index} className='w-full h-16 flex gap-4 items-center justify-between bg-white shadow-md mt-4 rounded'>
+                            <Link  to={`/user-profile/${com?._id}`}  key={index} className='w-full h-16 flex gap-4 items-center justify-between bg-white shadow-md mt-4 rounded'>
                             <div className='w-3/4 md:w-2/4 px-4 flex gap-4 items-center'>
                                 <Link to={`/user-profile/${com?._id}`}>
                                     <img src={com?.profileUrl}  alt={com?.name} 
@@ -112,7 +112,7 @@ export default function User() {
                                 <p className='text-purple-500 font-bold'>{com?.application?.length}</p>
                                 <span className='text-xs md:base font-semibold'>Job Apply</span>
                             </div>
-                        </div>
+                        </Link>
                         ))
                     }
                     <p className="mt-6 font-medium" >
