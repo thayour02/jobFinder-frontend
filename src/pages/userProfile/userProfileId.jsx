@@ -47,7 +47,7 @@ export default function UserProfileId() {
     };
     useEffect(() => {
         fetchUser();
-    });
+    },[info]);
 
     return (
         <div>
