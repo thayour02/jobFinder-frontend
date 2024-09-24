@@ -161,7 +161,7 @@ export default function Jobdetails() {
   useEffect(() => {
     id && getJobDetails()
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-  },[id,similarJob,job,isFetching])
+  },[id])
 
 
   const fetchApplications = async () => {
@@ -178,7 +178,7 @@ export default function Jobdetails() {
   }
   useEffect(() => {
     id && fetchApplications()
-  },[id,info])
+  },[id])
 
 
   const handleDeletePost = async () => {
