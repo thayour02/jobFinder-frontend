@@ -1,7 +1,7 @@
 
  import axios  from "axios"
 
-let API_URL = 'https://jobfinder-backend-1.onrender.com';
+let API_URL = 'https://jobfinder-backend-1.onrender.com/api';
 
 
 
