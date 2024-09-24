@@ -38,10 +38,8 @@ export default function FindJob() {
       sort: sort,
       jType: filterJobTypes,
       exp: filterExp,
-
       navigate: navigate,
       location: location,
-      
     })
     try {
       const res = await apiRequest({
@@ -208,11 +206,7 @@ export default function FindJob() {
                   </div>
                 )}
         </div>
-       
-       
       </div>
-              
-              
     </div>
   )
 }

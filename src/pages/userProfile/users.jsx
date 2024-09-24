@@ -48,6 +48,10 @@ export default function User() {
         }
     }
 
+    useEffect(() => {
+        fetchUser()
+    },[page,searchQuery,cmpLocation,sort,navigate,location])
+
     const handleSearchSubmit = async (e)=>{
         e.preventDefault()
       await fetchUser() 
@@ -56,9 +60,7 @@ export default function User() {
         setPage((prev)=> prev+1)
     }
 
-    useEffect(() => {
-        fetchUser()
-    })
+    
     return (
         <div className="container bg-purple-100 mx-auto px-4 py-10  md:px-4 ">
             <h2 className="text-3xl font-bold mb-2">Remote Companies</h2>

@@ -155,13 +155,13 @@ export default function Jobdetails() {
       setIsFetching(false)
     } catch (error) {
       setIsFetching(false)
-      console.log(error)
+      return error
     }
   }
   useEffect(() => {
     id && getJobDetails()
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-  })
+  },[similarJob,job,isFetching])
 
 
   const fetchApplications = async () => {
@@ -173,12 +173,12 @@ export default function Jobdetails() {
       })
       setInfo(app?.data)
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
   useEffect(() => {
     id && fetchApplications()
-  })
+  },[info])
 
 
   const handleDeletePost = async () => {
@@ -402,8 +402,6 @@ export default function Jobdetails() {
                       logo: job?.company?.profileUrl,
                       ...job
                     }
-                    console.log(data)
-
                     return <JobCard job={data} key={index} />
                   }
                   )}
