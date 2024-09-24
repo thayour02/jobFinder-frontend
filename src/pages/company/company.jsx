@@ -52,7 +52,7 @@ export default function Company() {
     }
     useEffect(() => {
         fetchCompany()
-    })
+    },[page,searchQuery,cmpLocation,sort,navigate,location])
     const handleSearchSubmit = async (e)=>{
         e.preventDefault()
       await fetchCompany() 
