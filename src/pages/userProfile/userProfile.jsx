@@ -50,26 +50,26 @@ const UserProfileForm = () => {
       const img = profileImg && (await
         handleFileUpload(profileImg));
       const newData = img ? { ...data, profileUrl: img } : data
+
       const result = await apiRequest({
         url: "/users/update-user",
         token: user?.token,
         data: newData,
         method: "PUT"
       })
+      
       if (result.status === false) {
         toast.error(result.message);
       } else {
         toast.success(result.message)
         dispatch(Login(data))
         localStorage.setItem("userInfo", JSON.stringify(data))
-        setTimeout(() => {
-          window.location.reload()
-        }, 1500)
+        window.location.reload()
       }
       setLoading(false)
     } catch (error) {
-      console.log(error)
-      setLoading(false)
+      setLoading(false);
+      return error;
     }
 
   };
@@ -276,7 +276,6 @@ export default function UserProfile() {
     }
     fetchUserProfile()
   })
-
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete your profile?')) {

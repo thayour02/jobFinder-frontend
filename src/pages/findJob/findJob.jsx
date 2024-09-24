@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect} from "react"
+import { useState, useContext, useEffect,useCallback} from "react"
 import { useLocation, useNavigate } from "react-router-dom";
 import Head from "../../component/header";
 import { BiBriefcaseAlt2 } from "react-icons/bi";
@@ -29,37 +29,36 @@ export default function FindJob() {
 
 
   // fetchJob
-  const fetchJob = async () => {
-    setIsFetching(true)
+  const fetchJob = useCallback(async () => {
+    setIsFetching(true);
     const newURL = updateUrl({
-      pageNum: page,
-      query: searchQuery,
-      cmpLoc: cmpLocation,
-      sort: sort,
-      jType: filterJobTypes,
-      exp: filterExp,
-      navigate: navigate,
-      location: location,
-    })
+        pageNum: page,
+        query: searchQuery,
+        cmpLoc: cmpLocation,
+        sort: sort,
+        jType: filterJobTypes,
+        exp: filterExp,
+        navigate: navigate,
+        location: location,
+    });
     try {
-      const res = await apiRequest({
-        url: "/jobs" + newURL,
-        method: "GET"
-      })
-      setNumPage(res?.numPage)
-      setRecordCount(res?.total)
-      setData(res?.data)
-
-      setIsFetching(false)
+        const res = await apiRequest({
+            url: "/jobs" + newURL,
+            method: "GET"
+        });
+        setNumPage(res?.numPage);
+        setRecordCount(res?.total);
+        setData(res?.data);
+        setIsFetching(false);
     } catch (error) {
-      setIsFetching(false)
-      return error
-    }}
-  
-  useEffect(() => {
-    fetchJob()
-  }, [page, searchQuery, cmpLocation, sort, filterJobTypes, filterExp, navigate, location]);
+        setIsFetching(false);
+        return error;
+    }
+}, [page, searchQuery, cmpLocation, sort, filterJobTypes, filterExp, navigate, location]);
 
+useEffect(()=>{
+  fetchJob()
+},[fetchJob])
   //FILTERJOBTYPES
   const filterJob = async (e) => {
     if (filterJobTypes?.includes(e)) {

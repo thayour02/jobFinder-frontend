@@ -1,5 +1,5 @@
 
-import { useContext } from 'react'
+import { useCallback, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { GlobalContext } from '../../context'
 import { HiLocationMarker } from 'react-icons/hi'
@@ -24,7 +24,7 @@ export default function UserProfileId() {
     const { user } = useSelector((state) => state.user)
 
     const params = useParams()
-    const fetchUser = async () => {
+    const fetchUser = useCallback(async () => {
         setLoading(true);
         try {
             const id = params?.id || user?._id;
@@ -44,10 +44,11 @@ export default function UserProfileId() {
             setLoading(false);
             return error
         }
-    };
+    },[params?.id ,user?._id])
+   
     useEffect(() => {
         fetchUser();
-    },[info]);
+    },[fetchUser]);
 
     return (
         <div>

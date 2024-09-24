@@ -1,5 +1,5 @@
 import  ListBox  from "../../component/listBox"
-import { useContext, useEffect } from "react"
+import { useCallback, useContext, useEffect } from "react"
 import { GlobalContext } from "../../context"
 import CustomButton from "../../component/customButton"
 import { Link } from "react-router-dom"
@@ -23,7 +23,7 @@ export default function User() {
 
 
 
-    const fetchUser = async () => {
+    const fetchUser = useCallback( async () => {
         setIsFetching(true)
         const newURL = updateUrl({
             pageNum: page,
@@ -46,11 +46,11 @@ export default function User() {
         } catch (error) {
             return toast(error)
         }
-    }
+    },[page,searchQuery,cmpLocation,sort,navigate,location])
 
     useEffect(() => {
         fetchUser()
-    },[page,searchQuery,cmpLocation,sort,navigate,location])
+    },[fetchUser])
 
     const handleSearchSubmit = async (e)=>{
         e.preventDefault()

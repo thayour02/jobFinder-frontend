@@ -1,5 +1,5 @@
 import  ListBox  from "../../component/listBox"
-import { useContext, useEffect } from "react"
+import { useCallback, useContext, useEffect } from "react"
 import { GlobalContext } from "../../context"
 import CustomButton from "../../component/customButton"
 import { apiRequest, updateUrl } from '../../utils/store'
@@ -24,10 +24,13 @@ export default function Company() {
     const { searchQuery, setSearchQuery,cmpLocation, setCmpLocation} = useContext(GlobalContext)
     const { numPage, setNumPage, } = useContext(GlobalContext)
 
+    // show more function
     const handleShowMore = async()=>{
         setPage((prev)=> prev+1)
     }
-    const fetchCompany = async () => {
+
+    // fetch Company
+    const fetchCompany = useCallback(async () => {
         setIsFetching(true)
         const newURL = updateUrl({
             pageNum: page,
@@ -49,10 +52,12 @@ export default function Company() {
         } catch (error) {
             return toast(error)
         }
-    }
+    },[page,searchQuery,cmpLocation,sort,navigate,location])
     useEffect(() => {
         fetchCompany()
-    },[page,searchQuery,cmpLocation,sort,navigate,location])
+    },[fetchCompany])
+
+    //search Function
     const handleSearchSubmit = async (e)=>{
         e.preventDefault()
       await fetchCompany() 
