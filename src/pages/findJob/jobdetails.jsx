@@ -253,7 +253,7 @@ export default function Jobdetails() {
                   {user?._id === job?.company?._id ?
                     <Link to={`/applications/${job?._id}`} className=" text-white bg-gradient-to-b from-black/60 to-black w-30
                   h-16 rounded-lg flex flex-col items-center justify-center">
-                      <span className="text-sm font-semibold">No. of Applicants</span>
+                      <span className="text-sm font-semibold px-2 md:px-0">No. of Applicants</span>
                       {
                         job?.application?.length > 0 
                        ? <p className="text-lg font-semibold">{job?.application?.length}</p>
@@ -262,7 +262,7 @@ export default function Jobdetails() {
                     
                     </Link> : <p className=" text-white bg-gradient-to-b from-black/60 to-black w-30
                 h-16 rounded-lg flex flex-col items-center justify-center">
-                      <span className="text-sm font-semibold">No. of Applicants</span>
+                      <span className="text-sm font-semibold px-2 md:px-0">No. of Applicants</span>
                       <p className="text-lg font-semibold">{job?.application?.length}</p>
                     </p>}
                 </div>
@@ -273,7 +273,7 @@ export default function Jobdetails() {
                 </div>
                 <div className=" text-white bg-gradient-to-b from-black/60 to-black 
                 w-30 h-16 rounded-lg flex flex-col items-center justify-center">
-                  <span className="text-sm font-semibold">Yr. of Experience</span>
+                  <span className="text-sm font-semibold px-2 md:px-0">Yr. of Experience</span>
                   <p className="text-lg font-semibold">{job?.experience}</p>
                 </div>
               </div>

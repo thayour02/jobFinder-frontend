@@ -392,25 +392,25 @@ export default function UserProfile() {
                 {info?.application?.map((job, index) => {
                   return <div key={index} >
                     <Link to={`/job-details/${job.job?._id}`}>
-                      <div className=' md:w-[20rem] max-w-md
-                       flex md:h-[18rem] h-[15rem] rounded-md px-3 py-5 flex flex-col 
+                      <div className='md:w-[20rem] max-w-md
+                       flex md:h-[18rem] h-[18rem] rounded-md px-3 py-5 flex flex-col 
                         bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
                        <div className='flex justify-between'>
-                       <div className='flex gap-3'>
-                          <img src={job?.job?.company.profileUrl}
-                            alt={job?.job?.name}
-                            className='w-14 h-14 rounded-lg truncate' />
-                          <div>
-                            <h1 className='text-black text-lg font-semibold'>{job?.job?.company.name}</h1>
-                            <p className='text-black text-lg font-semibold'>{job?.job?.jobTitle}</p>
-                            <p className='text-black text-lg font-semibold'>{job.job?.jobType}</p>
-                            <span className='flex gap-2 items-center text-purple-200'>
-                              <GoLocation className='text-slate-900 text-sm ' />
-                              {job.job?.location}
-                            </span>
+                          <div className='flex gap-3'>
+                            <img src={job?.job?.company.profileUrl}
+                              alt={job?.job?.name}
+                              className='w-14 h-14 rounded-lg truncate' />
+                            <div>
+                              <h1 className='text-black text-lg font-semibold'>{job?.job?.company.name}</h1>
+                              <p className='text-black text-lg font-semibold'>{job?.job?.jobTitle}</p>
+                              <p className='text-black text-lg font-semibold'>{job.job?.jobType}</p>
+                              <span className='flex gap-2 items-center text-purple-200'>
+                                <GoLocation className='text-slate-900 text-sm ' />
+                                {job.job?.location}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                        <h1 className='-mt-5 font-bold  text-purple-400'>{job?.job?.vacancy}</h1>
+                          <h1 className='-mt-5 font-bold  text-purple-400'>{job?.job?.vacancy}</h1>
                        </div>
                         <div className=''>
                           <p className='text-sm text-black font-semibold'>

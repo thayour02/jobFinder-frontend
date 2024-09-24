@@ -39,7 +39,6 @@ const CompanyForm = () => {
 
 
     const onSubmit = async (data) => {
-        setLoading(true);
         try {
             const img = profileImg && (await
                 handleFileUpload(profileImg));
@@ -57,6 +56,7 @@ const CompanyForm = () => {
                 toast.success(result.message)
                 dispatch(Login(data))
                 localStorage.setItem("userInfo", JSON.stringify(data))
+                setLoading(false)
                 setTimeout(() => {
                     window.location.reload()
                 }, 1500)
@@ -125,7 +125,7 @@ const CompanyForm = () => {
                                             type="text"
                                             register={register("url")}
                                         />
-                                        <div className='w-2/3 flex gap-2'>
+                                        <div className='w-1/2 flex gap-2'>
                                             <TextInput
                                                 name='contact'
                                                 label="Contact"
@@ -159,7 +159,7 @@ const CompanyForm = () => {
                                             <CustomButton
                                                 type='submit'
                                                 containerStyles={`inline-flex justify-center 
-                                             rounded-md bg-purple-200 text-xl font-semibold hover:bg-blue-400 w-1/4 h-8 border-2 border-black `}
+                                             rounded-md bg-purple-200 text-xl font-semibold hover:bg-blue-400 w-2/4 h-8`}
                                                 disabled={loading}
                                                 title={
                                                     loading ? <AiOutlineLoading3Quarters className='w-6 h-6 animate-spin' /> : `Submit`
@@ -179,7 +179,7 @@ const CompanyForm = () => {
 
 export default function CompanyProfile() {
     const { open, setOpen } = useContext(GlobalContext)
-    const { loading, setLoading } = useContext(GlobalContext)
+    const { setLoading } = useContext(GlobalContext)
     const { info, setInfo } = useContext(GlobalContext)
 
     const params = useParams()
@@ -206,11 +206,8 @@ export default function CompanyProfile() {
     }
     useEffect(() => {
         fetchCompany();
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-    })
-    if (loading) {
-        <Loading />
-    }
+        window.scrollTo({top:0, left:0, behavior:"smooth"})
+    },[])
 
     const dispatch = useDispatch()
     const handledeleteProfile = async () => {
@@ -286,23 +283,17 @@ export default function CompanyProfile() {
             </div>
             <div className='w-full mt-20 flex flex-col'>
                 <p className='font-bold'>Job Posted:</p>
-                <div className='grid md:grid-cols-3 px-10'>
+                <div className='grid md:grid-cols-3 '>
                     {
                         info?.jobPosts?.map((job, index) => {
                             return (
                                 <>
                                     <Link key={index} to={`/job-details/${job?._id}`}>
                                         <div className=' md:w-[20rem] max-w-md
-                                 flex md:h-[18rem] h-[15rem] rounded-md  flex flex-col 
-                                bg-white justify-between shadow-lg mt-5 rounded-md px-3 py-4 relative'>
+                       flex md:h-[18rem] h-[18rem] rounded-md px-3 py-5 flex flex-col 
+                        bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
 
-                                            <div className=''>
-                                            {accountType !== "Seeker" && info._id === user._id 
-                                                    ? <h1 className='font-bold text-red-500 px-[400px]  -mt-5 md:-ml-[110px]'>{
-                                                        job?.application.length > 0 ? job?.application.length :  ". " 
-                                                    }</h1>
-                                                    : <h1 className='font-bold text-green-500 ml-60 md:ml-16 -mt-5'>{job?.vacancy}</h1>
-                                                }
+                                            <div className='flex justify-between'>
                                                 <div className='flex gap-3'>
                                                     <img src={info?.profileUrl}
                                                         alt={job?.name}
@@ -316,7 +307,13 @@ export default function CompanyProfile() {
                                                         </span>
                                                     </div>
                                                 </div>
-                                               
+                                                {accountType !== "Seeker" && info._id === user._id
+                                                    ? <h1 className='font-bold text-red-500 -mt-5 font-bold '>{
+                                                        job?.application.length > 0 ? job?.application.length : ""
+                                                    }</h1>
+                                                    : <h1 className='font-bold text-green-500 -mt-5 font-bold '>{job?.vacancy}</h1>
+                                                }
+
                                             </div>
                                             <div className=''>
                                                 <p className='text-sm text-black font-semibold'>
@@ -329,8 +326,6 @@ export default function CompanyProfile() {
                                                 <span className='text-purple-900 text-sm'>{moment(job?.createdAt).fromNow()}</span>
                                             </div>
                                         </div>
-
-
                                     </Link>
                                 </>
                             )
