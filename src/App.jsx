@@ -25,7 +25,7 @@ function Layout() {
   return user?.token ?(
     <Outlet />
   ) : (
-    <Navigate to='/Home' state={{ from: location }} replace />
+    <Navigate to='/auth' state={{ from: location }} replace />
   );
 }
 
@@ -36,7 +36,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route element={<Layout />}>
-          <Route path='/' element={<Navigate to='/auth' replace={true} />} />
+          {/* <Route path='/' element={<Navigate to='/Home' replace={true} />} /> */}
           <Route path="/user-profile" element={<UserProfile />}/>
           <Route path={"/user-profile/:id"} element={<UserProfileId />} />
           <Route path={"/company-profile"} element={<CompanyProfile />} />
@@ -45,7 +45,7 @@ function App() {
           {/* <Route  path="/application" element={<Application />}/> */}
         </Route>
 
-        <Route path="/Home" element={<Home />}/>
+        <Route path="/" element={<Home />}/>
         <Route path='/find-jobs' element={<FindJob />} />
         <Route path='/company' element={<Company />} />
         <Route path="/find-users" element={<User/>}/>
