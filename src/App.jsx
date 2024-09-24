@@ -39,7 +39,7 @@ function App() {
         <Route element={<Layout />}>
           <Route
            path='/' 
-           element={<Navigate to='/Home' replace={true} />}
+           element={<Navigate to='/auth' replace={true} />}
           />
           <Route path="/user-profile" element={<UserProfile />}
           />
