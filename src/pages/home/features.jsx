@@ -10,7 +10,7 @@ const Features = () => {
             <div className="flex flex-col md:flex-row justify-between items-start gap-10">
                 <div className="lg:w-1/4">
                     <h1 className="text-3xl text-purple-900 font-bold lg:w-1/2 mb-3">Are You Looking For A Proffessional To Hire?</h1>
-                    <h1 className="text-base text-purple-200">Find A Worker to fill a role in your company</h1>
+                    <h1 className="text-base text-purple-200">Connect with skilled professionals  registered with us</h1>
                 </div>
                 {/* seeker and company */}
 

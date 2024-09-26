@@ -178,7 +178,7 @@ useEffect(()=>{
               <ListBox sort={sort} setSort={setSort} />
             </div>
           </div>
-           <div className="w-full md:flex flex-wrap">
+           <div className="w-full md:flex flex-wrap gap-4">
               {
                 data?.map((job, index) => {
                   const newJob = {

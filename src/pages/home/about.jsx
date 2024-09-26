@@ -44,7 +44,7 @@ const Abouts =()=>{
         <div className="flex flex-col md:flex-row justify-between items-start gap-10">
             <div className="lg:w-1/4">
                 <h1 className="text-3xl text-purple-900 font-bold lg:w-1/2 mb-3">Are You Looking For A Job?</h1>
-                <h1 className="text-base text-purple-200">Find A Worker to fill a role in your company</h1>
+                <h1 className="text-base text-purple-200">Register with us and connect with  leading companies with various position available for skilled professionals</h1>
             </div>
             {/* seeker and company */}
 

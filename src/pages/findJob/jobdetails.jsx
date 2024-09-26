@@ -50,6 +50,7 @@ const ApplicationForm = () => {
       // }
       if (apply?.status === false){
         toast.error(...apply.message)
+        setLoading(false)
       } else {
         toast.success(apply?.message)
         setInfo(apply?.data)
@@ -61,6 +62,7 @@ const ApplicationForm = () => {
         }, 1500)
       }
     } catch (error) {
+      setLoading(false)
       return toast.error(error)
     }
   }
@@ -96,7 +98,7 @@ const ApplicationForm = () => {
                   </Dialog.Title>
                   <form className='w-full mt-2 flex flex-col gap-5'
                     onSubmit={handleSubmit(onSubmit)}>
-                    <Toaster position='top-center' toastOptions={{ duration: 8000 }} />
+                    <Toaster position='top-right' toastOptions={{ duration: 8000 }} />
                     <div>
                       {/* <div className='w-1/2 mt-2'>
                         <label htmlFor="" className='text-sm mb-1'>CV</label>
@@ -121,7 +123,6 @@ const ApplicationForm = () => {
                       </div>
                     </div>
                   </form>
-
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -182,7 +183,7 @@ export default function Jobdetails() {
 
 
   const handleDeletePost = async () => {
-    if (window.confirm('Are you sure you want to delete your profile?')) {
+    if (window.confirm('Are you sure you want to delete this job?')) {
       try {
         {
           let deleteJob = await apiRequest({
@@ -202,7 +203,6 @@ export default function Jobdetails() {
       }
     }
   }
-
 
   return (
     <div>
@@ -395,7 +395,7 @@ export default function Jobdetails() {
               </div>
               : <div className="w-full md:w-1/3 2xl:w-2/4 p-5 mt-10 md:mt-0">
                 <p className="text-gray-500 text-2xl font-bold">Similar Job:</p>
-                <div className="md:flex-row flex flex-wrap  gap-3">
+                <div className="w-full md:flex flex-wrap gap-4">
                   {similarJob?.slice(0, 4).map((job, index) => {
                     const data = {
                       name: job?.company?.name,

@@ -129,7 +129,7 @@ const CompanyForm = () => {
                                             <TextInput
                                                 name='contact'
                                                 label="Contact"
-                                                placeholder='Phone Number'
+                                                placeholder='+234....'
                                                 type='string'
                                                 register={register("contact", {
                                                     required: 'Contact  is required'
@@ -283,7 +283,7 @@ export default function CompanyProfile() {
             </div>
             <div className='w-full mt-20 flex flex-col'>
                 <p className='font-bold'>Job Posted:</p>
-                <div className='grid md:grid-cols-3 '>
+                <div className='grid md:grid-cols-3 gap-4 '>
                     {
                         info?.jobPosts?.map((job, index) => {
                             return (
