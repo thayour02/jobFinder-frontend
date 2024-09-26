@@ -61,7 +61,7 @@ const VerifyEmail = () => {
     <div className='pt-40 h-screen bg-purple-200'>
       <Toaster position='top-left' toastOptions={{duration:3000}} />
       {verified ? (
-       <div className='w-full h-screen items-center bg-purple-200'>
+       <div className='w-full  items-center bg-purple-200'>
          <MdVerified className='w-full h-[40rem]' />
          <h1>{message}</h1>
        </div>
