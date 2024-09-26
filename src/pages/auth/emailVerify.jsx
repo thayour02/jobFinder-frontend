@@ -25,7 +25,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     const verifyEmail = async () => {
       let URL = null
-      if (isRegister && accountType !== "Seeker") {
+      if (isRegister && accountType === "Seeker") {
         URL = `/user/verify-email/${id}/${token}`
       } else {
         URL = `/verify-user/${id}/${token}`
