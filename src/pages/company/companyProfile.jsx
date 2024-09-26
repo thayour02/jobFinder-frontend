@@ -233,7 +233,7 @@ export default function CompanyProfile() {
                     <div className='flex items-center'>
                         <h2 className='text-xl font-semibold'>{info?.name}</h2>
                         {info?.isVerified === true
-                            ? <FcApproval className='mt-4' />
+                            ? <FcApproval className='' />
                             : <MdOutlineVerified className='' />
                         }
                     </div>

@@ -35,7 +35,7 @@ function MenuList() {
                                 <div className='flex items-center'>
                                     <p className="text-sm font-semibold">{user?.firstName ?? user?.lastname}</p>
                                     <div>
-                                        {user.isVerified === true
+                                        {user?.isVerified === true
                                             ? <FcApproval  />
                                             : <MdOutlineVerified  />
                                         }
@@ -47,7 +47,7 @@ function MenuList() {
                                 <div className='flex items-center space-x-1'>
                                 <p className="text-sm font-semibold">{user?.name}</p>
                                 <div>
-                                        {user.isVerified === true
+                                        {user?.isVerified === true
                                             ? <FcApproval />
                                             : <MdOutlineVerified />
                                         }

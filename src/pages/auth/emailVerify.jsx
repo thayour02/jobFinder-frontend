@@ -43,7 +43,6 @@ const VerifyEmail = () => {
           setMessage(response.message);
           toast.success(response.message);
           setLoading(false)
-  
           // Set timeout to dispatch to home page
           setTimeout(() => {
             window.location.replace('/find-jobs')
@@ -58,7 +57,7 @@ const VerifyEmail = () => {
   }, [token, id, accountType, dispatch, navigate,setLoading,isRegister]);
 
   return (
-    <div className='pt-40 h-screen bg-purple-200'>
+    <div className='pt-40 bg-purple-200'>
       <Toaster position='top-left' toastOptions={{duration:3000}} />
       {verified ? (
        <div className='w-full  items-center bg-purple-200'>
