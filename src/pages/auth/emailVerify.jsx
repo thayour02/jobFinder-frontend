@@ -4,7 +4,7 @@ import { apiRequest } from '../../utils/store'
 // import { accountType } from '../../utils/data'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch,} from 'react-redux'
-// import { Login } from '../../redux/slice'
+import { Login } from '../../redux/slice'
 import { toast, Toaster } from 'react-hot-toast'
 import { GlobalContext } from '../../context'
 import { MdVerified } from "react-icons/md";
@@ -23,7 +23,7 @@ const VerifyEmail = () => {
   
 
   useEffect(() => {
-    const verifyEmail = async () => {
+    const verifyEmail = async (data) => {
       let URL = null
       if (isRegister && accountType === "Seeker") {
         URL = `/user/verify-email/${id}/${token}`
@@ -46,6 +46,7 @@ const VerifyEmail = () => {
           // Set timeout to dispatch to home page
           setTimeout(() => {
             window.location.replace('/find-jobs')
+            dispatch(Login(data))
           }, 1500); // 1500ms = 1.5s
         }
       } catch (error) {

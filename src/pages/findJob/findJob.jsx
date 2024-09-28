@@ -68,7 +68,7 @@ useEffect(()=>{
     }
 
   }
-  //FILTERJOBTYPES
+  //FILTERJOBTYPES by experince
   const filterExperience = async (e) => {
     if (expVal?.includes(e)) {
       setExpVal(expVal?.filter((el) => el != e))
@@ -76,7 +76,6 @@ useEffect(()=>{
       setExpVal([...expVal, e])
     }
   }
-
   useEffect(() => {
     if (expVal.length > 0) {
       let newExpVal = [];
