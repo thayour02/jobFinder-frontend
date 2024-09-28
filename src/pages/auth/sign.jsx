@@ -65,7 +65,7 @@ const SignUp = () => {
                 window.location.replace("/verify-email")
                 toast.success(res?.message)
                 setTimeout(()=>{
-                    window.location.replace('/')
+                    window.location.replace('/find-jobs')
                 },1500)
                 }else{
                 const data = { token: res?.token, ...res?.user };
