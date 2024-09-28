@@ -66,7 +66,7 @@ const SignUp = () => {
                 toast.success(res?.message)
                 setTimeout(()=>{
                     window.location.replace('/')
-                })
+                },2500)
                 }else{
                 const data = { token: res?.token, ...res?.user };
                 dispatch(Login(data));

@@ -46,7 +46,7 @@ const VerifyEmail = () => {
           setTimeout(() => {
             window.location.replace('/find-jobs')
             dispatch(Login(data))
-          }, 1500); // 1500ms = 1.5s
+          }, 3000); // 1500ms = 1.5s
         }
       } catch (error) {
         setMessage(error);
@@ -60,8 +60,8 @@ const VerifyEmail = () => {
     <div className='pt-40 bg-purple-200 h-40'>
       <Toaster position='top-left' toastOptions={{duration:3000}} />
       {verified ? (
-       <div className='w-full  items-center bg-purple-200'>
-         <MdVerified className='w-full h-[40rem]' />
+       <div className='w-full  text-center bg-purple-200'>
+         <MdVerified className='w-full h-[20rem]' />
          <h1>{message}</h1>
        </div>
       ) : (
