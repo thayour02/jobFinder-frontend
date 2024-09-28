@@ -8,7 +8,8 @@ import { Login } from '../../redux/slice'
 import { toast, Toaster } from 'react-hot-toast'
 import { GlobalContext } from '../../context'
 import { MdVerified } from "react-icons/md";
-const VerifyEmail = () => {
+
+const VerifyCompanyEmail = () => {
   const [message, setMessage] = useState('');
   const [ verified, setVerified] = useState(false);
   const { accountType } = useContext(GlobalContext)
@@ -74,4 +75,4 @@ const VerifyEmail = () => {
 
 };
 
-export default VerifyEmail;
+export default VerifyCompanyEmail;
