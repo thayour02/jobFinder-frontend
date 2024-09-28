@@ -26,11 +26,6 @@ export default [
       'tailwindcss': tailwindcss,
 
     },
-    env: {
-      browser: true,
-      node: true,    
-      es6: true
-    },
     rules: {
       ...js.configs.recommended.rules,
       ...react.configs.recommended.rules,
