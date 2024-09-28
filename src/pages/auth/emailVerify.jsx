@@ -30,7 +30,6 @@ const VerifyEmail = () => {
       } else {
         URL = `/verify-user/${id}/${token}`
       }
-      
       setLoading(true)
       try {
         let response = await apiRequest({
@@ -69,9 +68,7 @@ const VerifyEmail = () => {
         <AiOutlineLoading3Quarters size={100} className="mt-10 flex justify-center px-40 align-items-center animate-spin" />
       )}
     </div>
-
   )
-
 };
 
 export default VerifyEmail;

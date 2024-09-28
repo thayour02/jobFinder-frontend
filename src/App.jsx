@@ -54,7 +54,7 @@ function App() {
         <Route path='/about-us' element={<About />} />
         <Route path='/auth' element={<Auth />} />
         <Route path="/verify-email/:id/:token" element={<EmailVerify />} />
-        <Route path="/verify-user/:id/:token" element={<VerifyCompanyEmail />} />
+        {/* <Route path="/verify-user/:id/:token" element={<VerifyCompanyEmail />} /> */}
         <Route path={"/job-details/:id"} element={<Jobdetails />} />
         <Route path={"/applications/:id"} element={<Application />}/>
         <Route path="/applicant-profile/:applicationId/:userId" element={<Applicants />}/>
