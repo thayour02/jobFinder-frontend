@@ -45,7 +45,7 @@ export default function Foooter() {
         }
     ]
     return (
-        <div className="max-w-screen-2xl  py-10 ">
+        <div className="max-w-screen-2xl  py-10 bg-gradient-to-r from-purple-900 to-purple-200">
         <footer className="footer bg-base-200 text-base-content p-10">
             <aside>
                <img src={img} alt="" />
