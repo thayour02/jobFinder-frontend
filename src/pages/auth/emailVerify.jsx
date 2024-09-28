@@ -25,7 +25,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     const verifyEmail = async (data) => {
       let URL = null
-      if (isRegister && accountType === "Seeker") {
+      if (accountType === "Seeker") {
         URL = `/user/verify-email/${id}/${token}`
       } else {
         URL = `/verify-user/${id}/${token}`
@@ -60,8 +60,8 @@ const VerifyEmail = () => {
     <div className='pt-40 bg-purple-200 h-40'>
       <Toaster position='top-left' toastOptions={{duration:3000}} />
       {verified ? (
-       <div className='w-full  text-center bg-purple-200'>
-         <MdVerified className='w-full h-[20rem]' />
+       <div className='w-full text-center bg-purple-200'>
+         <MdVerified className='w-full' />
          <h1>{message}</h1>
        </div>
       ) : (
