@@ -24,16 +24,10 @@ const VerifyEmail = () => {
 
   useEffect(() => {
     const verifyEmail = async (data) => {
-      let URL = null
-      if (accountType === "Seeker") {
-        URL = `/user/verify-email/${id}/${token}`
-      } else {
-        URL = `/verify-user/${id}/${token}`
-      }
       setLoading(true)
       try {
         let response = await apiRequest({
-          url: URL,
+          url: `/user/verify-email/${id}/${token}`,
           method: "GET",
         })
   
