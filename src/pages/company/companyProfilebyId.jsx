@@ -1,4 +1,4 @@
-import {useContext, useEffect} from 'react'
+import {useCallback, useContext, useEffect} from 'react'
 import { GlobalContext } from '../../context'
 import { useParams } from 'react-router-dom'
 import { FiPhoneCall} from 'react-icons/fi'
@@ -23,29 +23,25 @@ export default function CompanyProfileById() {
     const params = useParams()
     const { user } = useSelector((state) => state.user)
 
-    const fetchCompany = async () => {
+    const fetchCompany = useCallback( async () => {
         setLoading(true)
-        let id = null;
-        if (params.id && params.id !== undefined) {
-            id = params?.id
-        } else {
-            id = user?._id
-        }
+        let id = params?.id || user?._id;
+       
         try {
             let res = await apiRequest({
-                url: "/get-company/" + id,
+                url: `/get-company/${id}`,
                 method: "GET",
             })
+            console.log(res)
             setInfo(res?.data)
             setLoading(false)
         } catch (error) {
             return error;
         }
-    }
+    },[params?.id, user?._id])
     useEffect(() => {
         fetchCompany();
-        window.scrollTo({top:0, left:0, behavior:"smooth"})
-    },[])
+    },[fetchCompany])
 
     
     return (

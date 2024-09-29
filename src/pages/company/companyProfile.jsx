@@ -184,24 +184,25 @@ export default function CompanyProfile() {
 
     const { user } = useSelector((state) => state.user)
 
-    const fetchCompany = async () => {
-        setLoading(true)
-        try {
-            let res = await apiRequest({
-                url: "/get-company-profile",
-                method: "GET",
-            })
-            console.log(res)
-            setInfo(res?.data)
-            setLoading(false)
-        } catch (error) {
-            return error;
-        }
-    }
+    
     useEffect(() => {
+        const fetchCompany = async () => {
+            setLoading(true)
+            try {
+                let res = await apiRequest({
+                    url: "/get-company-profile",
+                    method: "GET",
+                    token:user?.token
+                })
+                console.log(res.data)
+                setInfo(res?.data)
+                setLoading(false)
+            } catch (error) {
+                return error;
+            }
+        }
         fetchCompany();
-        window.scrollTo({top:0, left:0, behavior:"smooth"})
-    },[])
+    })
 
     const dispatch = useDispatch()
     const handledeleteProfile = async () => {
@@ -213,7 +214,7 @@ export default function CompanyProfile() {
                     token: user?.token
                 })
                 dispatch(LogOut())
-                window.location.replace('/')
+                window.location.replace('/auth')
             } catch (error) {
                 return error;
             }
