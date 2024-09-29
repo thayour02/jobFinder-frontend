@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from 'react'
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
 import { GlobalContext } from '../../context'
 import { useParams } from 'react-router-dom'
 import CustomButton from '../../component/customButton'
@@ -184,37 +184,41 @@ export default function CompanyProfile() {
 
     const { user } = useSelector((state) => state.user)
 
-    
-    useEffect(() => {
-        const fetchCompany = async () => {
-            setLoading(true)
-            try {
-                let res = await apiRequest({
-                    url: "/get-company-profile",
-                    method: "GET",
-                    token:user?.token
-                })
-                console.log(res.data)
-                setInfo(res?.data)
-                setLoading(false)
-            } catch (error) {
-                return error;
-            }
+    const fetchCompany = useCallback(async () => {
+        setLoading(true)
+        try {
+            let res = await apiRequest({
+                url: "/get-company-profile",
+                method: "GET",
+                token: user?.token
+            })
+            setInfo(res?.data)
+            setLoading(false)
+        } catch (error) {
+            return error;
         }
+    }, [])
+
+    useEffect(() => {
         fetchCompany();
-    })
+    }, [])
 
     const dispatch = useDispatch()
     const handledeleteProfile = async () => {
         if (window.confirm('Are you sure you want to delete your profile?')) {
             try {
-                await apiRequest({
+              let del =  await apiRequest({
                     url: '/delete-profile',
                     method: "DELETE",
                     token: user?.token
                 })
-                dispatch(LogOut())
-                window.location.replace('/auth')
+                if (del.status === false) {
+                    toast.error({ ...del.message })
+                  } else {
+                    toast.success(del.message)
+                    dispatch(LogOut())
+                    window.location.replace('/auth')
+                  }
             } catch (error) {
                 return error;
             }
@@ -234,24 +238,24 @@ export default function CompanyProfile() {
                     </div>
                     <Link to={info?.url}>{info?.url || <span>No company website</span>}</Link>
                     <div>
-                                <CustomButton
-                                    onClick={() => setOpen(true)}
-                                    iconRight={<FiEdit3 />}
-                                    containerStyles={`py-1.5 md:px-5 bg-black/60 text-white  px-3 bg-purple-500 
+                        <CustomButton
+                            onClick={() => setOpen(true)}
+                            iconRight={<FiEdit3 />}
+                            containerStyles={`py-1.5 md:px-5 bg-black/60 text-white  px-3 bg-purple-500 
                                     rounded-full text-base focus:outline-none hover:bg-white`} />
-                                <Link to='/upload-job'>
-                                    <CustomButton
-                                        onClick={() => setOpen(true)}
-                                        iconRight={<FiUpload />}
-                                        containerStyles={`py-1.5 md:px-5 bg-black/60 text-white  px-3 bg-purple-500
+                        <Link to='/upload-job'>
+                            <CustomButton
+                                onClick={() => setOpen(true)}
+                                iconRight={<FiUpload />}
+                                containerStyles={`py-1.5 md:px-5 bg-black/60 text-white  px-3 bg-purple-500
                                         rounded-full text-base focus:outline-none hover:bg-white`} />
-                                </Link>
-                                <CustomButton
-                                    onClick={handledeleteProfile}
-                                    iconRight={<FaDeleteLeft />}
-                                    containerStyles={`py-1.5 md:px-5 bg-black/60 text-white  px-3 bg-purple-500
+                        </Link>
+                        <CustomButton
+                            onClick={handledeleteProfile}
+                            iconRight={<FaDeleteLeft />}
+                            containerStyles={`py-1.5 md:px-5 bg-black/60 text-white  px-3 bg-purple-500
                                     rounded-full text-base focus:outline-none hover:bg-white`} />
-                            </div>
+                    </div>
                 </div>
                 <div className='w-full flex flex-col md:flex-row justify-start md:justify-between mt-4 md:mt-8 text:sm'>
                     <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
@@ -276,53 +280,57 @@ export default function CompanyProfile() {
             <div className='w-full mt-20 flex flex-col'>
                 <p className='font-bold'>Job Posted:</p>
                 <div className='grid md:grid-cols-3 gap-4 '>
-                    {
-                        info?.jobPosts?.map((job, index) => {
-                            return (
-                                <>
-                                    <Link key={index} to={`/job-details/${job?._id}`}>
-                                        <div className=' md:w-[20rem] max-w-md
-                       flex md:h-[18rem] h-[18rem] rounded-md px-3 py-5 flex flex-col 
-                        bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
+                    {info?.jobPosts === 0 ?
+                        <h1>No Job</h1>
+                        :
+                        {
+                            info?.jobPosts?.map((job, index) => {
+                                return (
+                                    <>
+                                        <Link key={index} to={`/job-details/${job?._id}`}>
+                                            <div className=' md:w-[20rem] max-w-md
+                                        flex md:h-[18rem] h-[18rem] rounded-md px-3 py-5 flex flex-col 
+                                        bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
 
-                                            <div className='flex justify-between'>
-                                                <div className='flex gap-3'>
-                                                    <img src={info?.profileUrl}
-                                                        alt={job?.name}
-                                                        className='w-14 h-14 rounded-lg truncate' />
-                                                    <div>
-                                                        <p className='text-black text-lg font-semibold'>{job?.jobTitle}</p>
-                                                        <p className='text-black text-lg font-semibold'>{job?.jobType}</p>
-                                                        <span className='flex gap-2 items-center text-purple-200'>
-                                                            <GoLocation className='text-slate-900 text-sm ' />
-                                                            {job?.location}
-                                                        </span>
+                                                <div className='flex justify-between'>
+                                                    <div className='flex gap-3'>
+                                                        <img src={info?.profileUrl}
+                                                            alt={job?.name}
+                                                            className='w-14 h-14 rounded-lg truncate' />
+                                                        <div>
+                                                            <p className='text-black text-lg font-semibold'>{job?.jobTitle}</p>
+                                                            <p className='text-black text-lg font-semibold'>{job?.jobType}</p>
+                                                            <span className='flex gap-2 items-center text-purple-200'>
+                                                                <GoLocation className='text-slate-900 text-sm ' />
+                                                                {job?.location}
+                                                            </span>
+                                                        </div>
                                                     </div>
+                                                    {accountType !== "Seeker" && info._id === user._id
+                                                        ? <h1 className='font-bold text-red-500 -mt-5 font-bold '>{
+                                                            job?.application.length > 0 ? job?.application.length : ""
+                                                        }</h1>
+                                                        : <h1 className='font-bold text-green-500 -mt-5 font-bold '>{job?.vacancy}</h1>
+                                                    }
+
                                                 </div>
-                                                {accountType !== "Seeker" && info._id === user._id
-                                                    ? <h1 className='font-bold text-red-500 -mt-5 font-bold '>{
-                                                        job?.application.length > 0 ? job?.application.length : ""
-                                                    }</h1>
-                                                    : <h1 className='font-bold text-green-500 -mt-5 font-bold '>{job?.vacancy}</h1>
-                                                }
+                                                <div className=''>
+                                                    <p className='text-sm text-black font-semibold'>
+                                                        {job?.detail[0]?.desc?.slice(0, 150) + "..."}
+                                                    </p>
+                                                </div>
 
+                                                <div className='flex items-center justify-between'>
+                                                    <p className='bg-purple-200 text-black py-0.5 px-1.5 rounded font-semibold '>{job?.jobType}</p>
+                                                    <span className='text-purple-900 text-sm'>{moment(job?.createdAt).fromNow()}</span>
+                                                </div>
                                             </div>
-                                            <div className=''>
-                                                <p className='text-sm text-black font-semibold'>
-                                                    {job?.detail[0]?.desc?.slice(0, 150) + "..."}
-                                                </p>
-                                            </div>
-
-                                            <div className='flex items-center justify-between'>
-                                                <p className='bg-purple-200 text-black py-0.5 px-1.5 rounded font-semibold '>{job?.jobType}</p>
-                                                <span className='text-purple-900 text-sm'>{moment(job?.createdAt).fromNow()}</span>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </>
-                            )
-                        })
-                    }
+                                        </Link>
+                                    </>
+                                )
+                            })
+                    } 
+                }
                 </div>
             </div>
             <CompanyForm opem={open} setOpen={setOpen} />

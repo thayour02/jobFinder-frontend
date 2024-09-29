@@ -32,7 +32,6 @@ export default function CompanyProfileById() {
                 url: `/get-company/${id}`,
                 method: "GET",
             })
-            console.log(res)
             setInfo(res?.data)
             setLoading(false)
         } catch (error) {
