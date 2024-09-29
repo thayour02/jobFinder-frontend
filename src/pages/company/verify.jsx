@@ -32,7 +32,7 @@ const VerifyCompanyEmail = () => {
         })
         console.log(response)
         if (response.success === true) {
-          setVerified(response.user.isVerified);;
+          setVerified(response.account.isVerified);;
           setMessage(response.message);
           toast.success(response.message);
           setLoading(false)
