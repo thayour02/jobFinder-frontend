@@ -30,9 +30,8 @@ const VerifyCompanyEmail = () => {
           url: `/verify-user/${id}/${token}`,
           method: "GET",
         })
-        console.log(response)
         if (response.success === true) {
-          setVerified(response.account.isVerified);;
+          setVerified(response.user.isVerified);;
           setMessage(response.message);
           toast.success(response.message);
           setLoading(false)
@@ -51,7 +50,7 @@ const VerifyCompanyEmail = () => {
   }, [token, id, accountType, dispatch, navigate,setLoading,isRegister]);
 
   return (
-    <div className='pt-20 bg-purple-200 h-screen'>
+    <div className='pt-20  h-screen'>
       <Toaster position='top-left' toastOptions={{duration:3000}} />
       {verified ? (
        <div className='max-w-screen-2xl xl:px-20 px-4  items-center bg-purple-200'>
