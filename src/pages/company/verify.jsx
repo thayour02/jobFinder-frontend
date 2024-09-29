@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
 import { apiRequest } from '../../utils/store'
-// import { accountType } from '../../utils/data'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch,} from 'react-redux'
 import { Login } from '../../redux/slice'
@@ -31,7 +30,7 @@ const VerifyCompanyEmail = () => {
           url: `/verify-user/${id}/${token}`,
           method: "GET",
         })
-  
+        console.log(response)
         if (response.success === true) {
           setVerified(response.user.isVerified);;
           setMessage(response.message);
