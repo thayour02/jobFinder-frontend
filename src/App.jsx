@@ -7,7 +7,6 @@ import PostJob from "./pages/postJob/postjob.jsx"
 import  UserProfile from './pages/userProfile/userProfile.jsx'
 import  Company   from './pages/company/company.jsx'
 import CompanyProfile from './pages/company/companyProfile.jsx'
-import CompanyProfileById from './pages/company/companyProfilebyId.jsx'
 import Auth from "./pages/auth/auth.jsx"
 import About from './pages/about/about.jsx'
 import { useSelector } from "react-redux";
