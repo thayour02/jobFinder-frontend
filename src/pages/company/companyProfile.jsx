@@ -182,22 +182,16 @@ export default function CompanyProfile() {
     const { setLoading } = useContext(GlobalContext)
     const { info, setInfo } = useContext(GlobalContext)
 
-    const params = useParams()
     const { user } = useSelector((state) => state.user)
 
     const fetchCompany = async () => {
         setLoading(true)
-        let id = null;
-        if (params.id && params.id !== undefined) {
-            id = params?.id
-        } else {
-            id = user?._id
-        }
         try {
             let res = await apiRequest({
-                url: "/get-company/" + id,
+                url: "/get-company-profile",
                 method: "GET",
             })
+            console.log(res)
             setInfo(res?.data)
             setLoading(false)
         } catch (error) {
@@ -238,9 +232,7 @@ export default function CompanyProfile() {
                         }
                     </div>
                     <Link to={info?.url}>{info?.url || <span>No company website</span>}</Link>
-                    {user?.accountType === undefined &&
-                        info?._id === user?._id && (
-                            <div>
+                    <div>
                                 <CustomButton
                                     onClick={() => setOpen(true)}
                                     iconRight={<FiEdit3 />}
@@ -259,7 +251,6 @@ export default function CompanyProfile() {
                                     containerStyles={`py-1.5 md:px-5 bg-black/60 text-white  px-3 bg-purple-500
                                     rounded-full text-base focus:outline-none hover:bg-white`} />
                             </div>
-                        )}
                 </div>
                 <div className='w-full flex flex-col md:flex-row justify-start md:justify-between mt-4 md:mt-8 text:sm'>
                     <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
