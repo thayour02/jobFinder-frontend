@@ -280,10 +280,7 @@ export default function CompanyProfile() {
             <div className='w-full mt-20 flex flex-col'>
                 <p className='font-bold'>Job Posted:</p>
                 <div className='grid md:grid-cols-3 gap-4 '>
-                    {info?.jobPosts === 0 ?
-                        <h1>No Job</h1>
-                        :
-                        {
+                {
                             info?.jobPosts?.map((job, index) => {
                                 return (
                                     <>
@@ -330,7 +327,6 @@ export default function CompanyProfile() {
                                 )
                             })
                     } 
-                }
                 </div>
             </div>
             <CompanyForm opem={open} setOpen={setOpen} />
