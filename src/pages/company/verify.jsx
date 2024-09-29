@@ -51,11 +51,11 @@ const VerifyCompanyEmail = () => {
   }, [token, id, accountType, dispatch, navigate,setLoading,isRegister]);
 
   return (
-    <div className='pt-40 bg-purple-200 h-40'>
+    <div className='pt-20 bg-purple-200 h-screen'>
       <Toaster position='top-left' toastOptions={{duration:3000}} />
       {verified ? (
-       <div className='w-full  items-center bg-purple-200'>
-         <MdVerified className='w-full h-[40rem]' />
+       <div className='max-w-screen-2xl xl:px-20 px-4  items-center bg-purple-200'>
+         <MdVerified className='w-full' />
          <h1>{message}</h1>
        </div>
       ) : (
