@@ -7,6 +7,7 @@ import PostJob from "./pages/postJob/postjob.jsx"
 import  UserProfile from './pages/userProfile/userProfile.jsx'
 import  Company   from './pages/company/company.jsx'
 import CompanyProfile from './pages/company/companyProfile.jsx'
+import CompanyProfileById from './pages/company/companyProfilebyId.jsx'
 import Auth from "./pages/auth/auth.jsx"
 import About from './pages/about/about.jsx'
 import { useSelector } from "react-redux";
@@ -20,6 +21,7 @@ import ResetPassword from "./pages/auth/resetPassword.jsx";
 import Applicants from "./pages/userProfile/applicants.jsx";
 // import VerifyEmail from "./pages/auth/emailVerify.jsx";
 import VerifyCompanyEmail from "./pages/company/verify.jsx";
+import CompanyProfileById from "./pages/company/companyProfilebyId.jsx";
 
 function Layout() {
   const { user } = useSelector((state) => state.user);
@@ -42,7 +44,7 @@ function App() {
           <Route path="/user-profile" element={<UserProfile />}/>
           <Route path={"/user-profile/:id"} element={<UserProfileId />} />
           <Route path={"/company-profile"} element={<CompanyProfile />} />
-          <Route path={"/company-profile/:id"} element={<CompanyProfile />} />
+          <Route path={"/company-profile/:id"} element={<CompanyProfileById />} />
           <Route path={"/upload-job"} element={<PostJob />} />
           {/* <Route  path="/application" element={<Application />}/> */}
         </Route>

@@ -15,7 +15,7 @@ import { FcApproval } from "react-icons/fc";
 import { MdOutlineVerified } from "react-icons/md";
 
 
-export default function CompanyProfile() {
+export default function CompanyProfileById() {
     // const { open, setOpen } = useContext(GlobalContext)
     const { setLoading } = useContext(GlobalContext)
     const { info, setInfo } = useContext(GlobalContext)
