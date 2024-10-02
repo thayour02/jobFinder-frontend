@@ -44,12 +44,12 @@ export default function ResetPassword() {
             if (reset.status === false) {
                 toast.error(reset.message)
                 setLoading(false)
-                setTimeout(() => {
-                    window.location.replace('/')
-                }, 1500);
             } else {
                 toast.success(reset?.message)
                 setLoading(false)
+                setTimeout(() => {
+                    window.location.replace('/find-jobs')
+                }, 1500);
             }
         } catch (error) {
             console.log(error)
