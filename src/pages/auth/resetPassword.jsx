@@ -48,7 +48,7 @@ export default function ResetPassword() {
                 toast.success(reset?.message)
                 setLoading(false)
                 setTimeout(() => {
-                    window.location.replace('/find-jobs')
+                    window.location.replace('/auth')
                 }, 1500);
             }
         } catch (error) {
