@@ -51,7 +51,7 @@ const Applicants = () => {
         const { applicationId } = params
         const { userId } = params
         try {
-            await apiRequest({
+          const app =  await apiRequest({
                 url: `/update-application/${applicationId}/${userId}`,
                 method: "PUT",
                 data: { status: newStatus },
@@ -65,7 +65,7 @@ const Applicants = () => {
                     app._id === applicationId ? { ...app, status: newStatus } : app
                 )
             }))
-            toast(`you ${newStatus} the application`)
+            toast.success(app?.message)
         } catch (error) {
             return error
         }
