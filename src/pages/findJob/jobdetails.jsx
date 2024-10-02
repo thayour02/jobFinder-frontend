@@ -41,15 +41,9 @@ const ApplicationForm = () => {
         data: data,
         token: user?.token
       })
-      // console.log(apply)
-      // if(!user?.token){
-      //   toast.error("authorisation failed... please logging")
-      //  setTimeout(()=>{
-      //   window.location.replace('/auth')
-      //  },1000)
-      // }
+     
       if (apply?.status === false){
-        toast.error(...apply.message)
+        toast.error(apply?.message)
         setLoading(false)
       } else {
         toast.success(apply?.message)
@@ -215,9 +209,10 @@ export default function Jobdetails() {
             <div className="w-full h-fit bg-white shadow-md md:w-2/3 2xl:2/4 px-2 py-10 ">
               <div className="w-full flex  items-center justify-between">
                 <div className="w-3/4 flex gap-2" >
-                  <Toaster position='top-right' toastOptions={{ duration: 9000 }} />
+                  <Toaster position='top-left' toastOptions={{ duration: 3000 }} />
                   <img src={job?.company?.profileUrl}
                     alt={job?.company?.name}
+                    
                     className="w-20 h-20 md:w-24 md:h-20 rounded" />
                   <div className="flex flex-col">
                     <p className="font-bold text-xl">{job?.jobTitle}</p>
