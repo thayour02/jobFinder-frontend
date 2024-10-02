@@ -27,7 +27,6 @@ const SignUp = () => {
         register,
         handleSubmit,
         getValues,
-        // watch,
         formState: { errors },
     } = useForm({
         mode: "onChange",
@@ -147,7 +146,7 @@ const SignUp = () => {
                                             }
                                             placeholder={
                                                 accountType === "Seeker"
-                                                    ? "eg. James"
+                                                    ? "eg. Temi"
                                                     : "Comapy name"
                                             }
                                             type='text'
@@ -177,7 +176,7 @@ const SignUp = () => {
                                             <TextInput
                                                 name='LastName'
                                                 label='Last Name'
-                                                placeholder='Wagonner'
+                                                placeholder='Tayo'
                                                 type='text'
                                                 register={register("LastName", {
                                                     required: "Last Name is required",

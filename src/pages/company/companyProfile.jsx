@@ -207,18 +207,18 @@ export default function CompanyProfile() {
     const handledeleteProfile = async () => {
         if (window.confirm('Are you sure you want to delete your profile?')) {
             try {
-              let del =  await apiRequest({
+                let del = await apiRequest({
                     url: '/delete-profile',
                     method: "DELETE",
                     token: user?.token
                 })
                 if (del.status === false) {
                     toast.error({ ...del.message })
-                  } else {
+                } else {
                     toast.success(del.message)
                     dispatch(LogOut())
                     window.location.replace('/auth')
-                  }
+                }
             } catch (error) {
                 return error;
             }
@@ -280,53 +280,53 @@ export default function CompanyProfile() {
             <div className='w-full mt-20 flex flex-col'>
                 <p className='font-bold'>Job Posted:</p>
                 <div className='grid md:grid-cols-3 gap-4 '>
-                {
-                            info?.jobPosts?.map((job, index) => {
-                                return (
-                                    <>
-                                        <Link key={index} to={`/job-details/${job?._id}`}>
-                                            <div className=' md:w-[20rem] max-w-md
+                    {
+                        info?.jobPosts?.map((job, index) => {
+                            return (
+                                <>
+                                    <Link key={index} to={`/job-details/${job?._id}`}>
+                                        <div className=' md:w-[20rem] max-w-md
                                         flex md:h-[18rem] h-[18rem] rounded-md px-3 py-5 flex flex-col 
                                         bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
 
-                                                <div className='flex justify-between'>
-                                                    <div className='flex gap-3'>
-                                                        <img src={info?.profileUrl}
-                                                            alt={job?.name}
-                                                            className='w-14 h-14 rounded-lg truncate' />
-                                                        <div>
-                                                            <p className='text-black text-lg font-semibold'>{job?.jobTitle}</p>
-                                                            <p className='text-black text-lg font-semibold'>{job?.jobType}</p>
-                                                            <span className='flex gap-2 items-center text-purple-200'>
-                                                                <GoLocation className='text-slate-900 text-sm ' />
-                                                                {job?.location}
-                                                            </span>
-                                                        </div>
+                                            <div className='flex justify-between'>
+                                                <div className='flex gap-3'>
+                                                    <img src={info?.profileUrl}
+                                                        alt={job?.name}
+                                                        className='w-14 h-14 rounded-lg truncate' />
+                                                    <div>
+                                                        <p className='text-black text-lg font-semibold'>{job?.jobTitle}</p>
+                                                        <p className='text-black text-lg font-semibold'>{job?.jobType}</p>
+                                                        <span className='flex gap-2 items-center text-purple-200'>
+                                                            <GoLocation className='text-slate-900 text-sm ' />
+                                                            {job?.location}
+                                                        </span>
                                                     </div>
-                                                    {accountType !== "Seeker" && info._id === user._id
-                                                        ? <h1 className='font-bold text-red-500 -mt-5 font-bold '>{
-                                                            job?.application.length > 0 ? job?.application.length : ""
-                                                        }</h1>
-                                                        : <h1 className='font-bold text-green-500 -mt-5 font-bold '>{job?.vacancy}</h1>
-                                                    }
+                                                </div>
+                                                {accountType !== "Seeker" && info._id === user._id
+                                                    ? <h1 className='font-bold text-red-500 -mt-5 font-bold '>{
+                                                        job?.application.length > 0 ? job?.application.length : ""
+                                                    }</h1>
+                                                    : <h1 className='font-bold text-green-500 -mt-5 font-bold '>{job?.vacancy}</h1>
+                                                }
 
-                                                </div>
-                                                <div className=''>
-                                                    <p className='text-sm text-black font-semibold'>
-                                                        {job?.detail[0]?.desc?.slice(0, 150) + "..."}
-                                                    </p>
-                                                </div>
-
-                                                <div className='flex items-center justify-between'>
-                                                    <p className='bg-purple-200 text-black py-0.5 px-1.5 rounded font-semibold '>{job?.jobType}</p>
-                                                    <span className='text-purple-900 text-sm'>{moment(job?.createdAt).fromNow()}</span>
-                                                </div>
                                             </div>
-                                        </Link>
-                                    </>
-                                )
-                            })
-                    } 
+                                            <div className=''>
+                                                <p className='text-sm text-black font-semibold'>
+                                                    {job?.detail[0]?.desc?.slice(0, 150) + "..."}
+                                                </p>
+                                            </div>
+
+                                            <div className='flex items-center justify-between'>
+                                                <p className='bg-purple-200 text-black py-0.5 px-1.5 rounded font-semibold '>{job?.jobType}</p>
+                                                <span className='text-purple-900 text-sm'>{moment(job?.createdAt).fromNow()}</span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                </>
+                            )
+                        })
+                    }
                 </div>
             </div>
             <CompanyForm opem={open} setOpen={setOpen} />

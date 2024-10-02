@@ -17,6 +17,7 @@ import { useEffect } from 'react'
 import CustomButton from '../../component/customButton'
 import { FcApproval } from "react-icons/fc";
 import { MdOutlineVerified } from "react-icons/md"
+import {toast, Toaster} from "react-hot-toast"
 
 
 const Applicants = () => {
@@ -64,6 +65,7 @@ const Applicants = () => {
                     app._id === applicationId ? { ...app, status: newStatus } : app
                 )
             }))
+            toast(`you ${newStatus} the application`)
         } catch (error) {
             return error
         }
@@ -71,12 +73,13 @@ const Applicants = () => {
 
     return (
         <div>
-            {loading ? <div className="mt-10 flex justify-center px-40" disabled={loading}>
+            {loading ? <div className="h-screen items-center mt-10 flex justify-center px-40" disabled={loading}>
                 <AiOutlineLoading3Quarters size={100} className="align-items-center text-purple-200 animate-spin w-full h-full pt-20" />
             </div>
                 :
 
                 <div className='container  mx-auto py-10 flex items-center justify-center pt-20'>
+                    <Toaster toastOptions={{duration:3000}} position='top-left'/>
                     <div className='w-full md:w-2/3 2xl:w-2/3 bg-white shadow-lg p-10 pb-20 rounded-lg'>
                         <div className='flex flex-col items-center justify-center mb-8'>
                             <div className='flex '>
