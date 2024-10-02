@@ -30,7 +30,7 @@ export default function Reset() {
   if (accountType === "Seeker") {
     URL = "/user/forgot-password"
   } else {
-    URL = "/reset-password"
+    URL = "/forgotten-password"
   }
   const onSubmit = async (data) => {
     setLoading(true)
@@ -40,10 +40,10 @@ export default function Reset() {
         method: "POST",
         data: { email: data.email }
       })
-      if(reset.status === false){
+      if (reset.status === false) {
         toast.error(reset.message)
         setLoading(false)
-      }else{
+      } else {
         toast.success(reset?.message)
         setLoading(false)
       }
@@ -66,11 +66,11 @@ export default function Reset() {
             <div>
               <div className='w-full flex items-center justify-center py-4'>
                 <button className={`flex-1 px-4 py-2 rounded text-sm outline-none 
-                     ${accountType === 'Seeker'
+                             ${accountType === 'Seeker'
                     ? "bg-purple-200 text-black-500"
                     : "bg-white border border-black"
                   }`} onClick={() => setAccountType('Seeker')}>
-                  User Account
+                  Seeker
                 </button>
                 <button className={`flex-1 px-4 py-2
                             rounded text-sm outline-none 

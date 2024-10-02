@@ -30,7 +30,7 @@ export default function ResetPassword() {
     if (accountType === "Seeker") {
         URL = `/user/reset-password/${id}/${token}`
     } else {
-        URL = "/reset-password"
+        URL = `/reset-password/${id}/${token}`
     }
 
     const onSubmit = async (data) => {
