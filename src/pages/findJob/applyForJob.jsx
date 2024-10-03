@@ -6,6 +6,7 @@ import { GlobalContext } from "../../context";
 import { Link } from 'react-router-dom'
 import { GoLocation } from 'react-icons/go'
 import moment from 'moment'
+import { motion } from "framer-motion";
 // import JobCard from "../../component/jobCard";
 
 export default function Application() {
@@ -29,7 +30,7 @@ export default function Application() {
     id && fetchApplications()
   })
   return (
-    <div className='w-full flex flex-col pt-20 h-screen'>
+    <div className='w-full grid md:grid-cols-3 gap-4 pt-20 h-screen'>
       <p className='font-bold text-2xl'>Applicants:</p>
       <div className='grid md:grid-cols-3 px-10'>
         {info?.length === 0 
@@ -39,26 +40,34 @@ export default function Application() {
           info?.map((job, index) => {
             return <div key={index} >
               <Link to={`/applicant-profile/${job._id}/${job.user?._id}`}>
-                <div className=' md:w-[20rem] max-w-md
+                <motion.div 
+                 variants={{
+                  hidden: { opacity: 0, x: 75 },
+                  visible: { opacity: 1, x: 0 }
+              }}
+              initial="hidden"
+              animate="visible"
+              transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
+                className=' md:w-[20rem] max-w-md
                         flex md:h-[18rem] h-[15rem] rounded-md px-3 py-5 flex flex-col 
                        bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
 
                   <div className='flex gap-3'>
                     <img src={job?.user?.profileUrl}
-                      alt={job?.user?.firstName}
+                      alt=""
                       className='w-14 h-14 rounded-lg truncate' />
                     <div>
-                      <p className='text-black text-lg font-semibold'>{job?.user?.jobTitle}</p>
-                      <p className='text-black text-lg font-semibold'>{job?.user?.jobType}</p>
+                      <p className='text-black text-lg font-semibold'>{job?.user?.jobTitle || ""}</p>
+                      <p className='text-black text-lg font-semibold'>{job?.user?.firstName}</p>
                       <span className='flex gap-2 items-center text-purple-200'>
                         <GoLocation className='text-slate-900 text-sm ' />
-                        {job?.user?.location}
+                        {job?.user?.location || " "}
                       </span>
                     </div>
                   </div>
                   <div className=''>
                     <p className='text-sm text-black font-semibold'>
-                      {job.user?.about?.slice(0, 150) + "..."}
+                      {job.user?.about?.slice(0, 150) + "..." || ""}
                     </p>
                   </div>
                   <div className='flex items-center justify-between'>
@@ -68,7 +77,7 @@ export default function Application() {
                     </div>
                     <span className='text-purple-900 text-sm'>{moment(job?.appliedAt).fromNow()}</span>
                   </div>
-                </div>
+                </motion.div>
               </Link>
             </div>
 

@@ -24,7 +24,7 @@ import { GoLocation } from 'react-icons/go'
 import { LogOut } from '../../redux/slice'
 import { FcApproval } from "react-icons/fc";
 import { MdOutlineVerified } from "react-icons/md";
-
+import { motion } from 'framer-motion'
 
 
 
@@ -306,7 +306,15 @@ export default function UserProfile() {
           : <div>
              <div className='container mx-auto py-10 flex items-center justify-center pt-20'>
               <div className='w-full md:w-2/3 2xl:w-2/3 bg-white shadow-lg p-10 pb-20 rounded-lg'>
-                <div className='flex flex-col items-center justify-center mb-4'>
+                <motion.div
+                 variants={{
+                  hidden: { opacity: 0, x: -75 },
+                  visible: { opacity: 1, x: 0 }
+              }}
+              initial="hidden"
+              animate="visible"
+              transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
+                 className='flex flex-col items-center justify-center mb-4'>
                   <div className='flex space-x-2 items-center'>
                   <h1 className='text-4xl font-semibold'>{info?.firstName + " " + info?.LastName}</h1>
                   {info?.isVerified ===  true
@@ -330,8 +338,16 @@ export default function UserProfile() {
                       {info?.contact ?? "No Contact"}
                     </p>
                   </div>
-                </div>
-                <div className='w-full cursor-pointer  shadow-lg flex flex-col md:flex-row justify-start md:justify-between mt-4 md:mt-8 text:sm'>
+                </motion.div>
+                <motion.div
+                 variants={{
+                  hidden: { opacity: 0, x: 75 },
+                  visible: { opacity: 1, x: 0 }
+              }}
+              initial="hidden"
+              animate="visible"
+              transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
+                 className='w-full cursor-pointer  shadow-lg flex flex-col md:flex-row justify-start md:justify-between mt-4 md:mt-8 text:sm'>
                   <a className='flex  space-x-1  items-center px-2 py-1 rounded-full' href={info?.socialMedia?.linkedin}>
                     <span>linkedin</span>
                     <FaLinkedin />
@@ -354,15 +370,31 @@ export default function UserProfile() {
                     <span>Portfolio </span>
                     <BsPersonFill />
                   </a>
-                </div>
+                </motion.div>
                 <hr />
                 <div className='w-full py-10'>
                   <div className='w-full flex flex-col-reverse md:flex-row gap-8 py-6'>
-                    <div className='w-full md:w-2/3 flex flex-col gap-4 mt-20 md:mt-0'>
+                    <motion.div
+                     variants={{
+                      hidden: { opacity: 0, x: -75 },
+                      visible: { opacity: 1, x: 0 }
+                  }}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
+                     className='w-full md:w-2/3 flex flex-col gap-4 mt-20 md:mt-0'>
                       <p className='text-purple-800 font-bold text-2xl'>ABOUT</p>
                       <span className='text-justify leading-7'>{info?.about || "about user"}</span>
-                    </div>
-                    <div className='w-full md:w-1/3 mt-10  flex flex-col items-center'>
+                    </motion.div>
+                    <motion.div
+                     variants={{
+                      hidden: { opacity: 0, y: 75 },
+                      visible: { opacity: 1, y: 0 }
+                  }}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
+                     className='w-full md:w-1/3 mt-10  flex flex-col items-center'>
                       <img src={info?.profileUrl || NoProfile}
                         className='h-40 w-48  object-container 
                        rounded-md bg-white' alt={info?.profileUrl || NoProfile} />
@@ -381,7 +413,7 @@ export default function UserProfile() {
                                  rounded-full focus:outline-none hover:bg-red-200 hover:text-white`} />
                       </div>
 
-                    </div>
+                    </motion.div>
                   </div>
                 </div>
               </div>

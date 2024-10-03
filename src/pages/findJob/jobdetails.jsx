@@ -344,7 +344,7 @@ export default function Jobdetails() {
                 <div className='md:flex-row flex flex-wrap gap-3'>
                   {info?.length === 0 
                     ? <h1 className=" p-40 font-bold text-2xl ">No Applicant Yet</h1>
-                    : <>
+                    : <div className="grid md:grid-cols-3 gap-4 ">
                       {
                         info?.map((job, index) => {
                           return <div key={index} >
@@ -352,25 +352,25 @@ export default function Jobdetails() {
                               <div className=' md:w-[20rem] max-w-md
                         flex md:h-[18rem] h-[15rem] rounded-md px-3 py-5 flex flex-col 
                        bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
-                                <h1>
+                                {/* <h1>
                                   {job?.application?.id}
-                                </h1>
+                                </h1> */}
                                 <div className='flex gap-3'>
                                   <img src={job?.user?.profileUrl}
-                                    alt={job?.user?.firstName}
+                                    alt=""
                                     className='w-14 h-14 rounded-lg truncate' />
                                   <div>
-                                    <p className='text-black text-lg font-semibold'>{job?.user?.jobTitle}</p>
-                                    <p className='text-black text-lg font-semibold'>{job?.user?.jobType}</p>
+                                    <p className='text-black text-lg font-semibold'>{job?.user?.jobTitle || ""}</p>
+                                    <p className='text-black text-lg font-semibold'>{job?.user?.firstName}</p>
                                     <span className='flex gap-2 items-center text-purple-200'>
                                       <GoLocation className='text-slate-900 text-sm ' />
-                                      {job?.user?.location}
+                                      {job?.user?.location || ""}
                                     </span>
                                   </div>
                                 </div>
                                 <div className=''>
                                   <p className='text-sm text-black font-semibold'>
-                                    {job.user?.about?.slice(0, 150) + "..."}
+                                    {job.user?.about?.slice(0, 150) + "..." || " "}
                                   </p>
                                 </div>
                                 <div className='flex items-center justify-between'>
@@ -384,7 +384,7 @@ export default function Jobdetails() {
                             </Link>
                           </div>
                         })}
-                    </>
+                    </div>
                   }
                 </div>
               </div>
