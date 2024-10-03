@@ -21,7 +21,6 @@ export default function Application() {
         method: "GET",
         token: user?.token
       })
-      console.log(app)
       setInfo(app?.data)
     } catch (error) {
       return error
@@ -29,11 +28,11 @@ export default function Application() {
   }
   useEffect(() => {
     id && fetchApplications()
-  })
+  },[id])
   return (
     <div className='w-full  gap-4 pt-20 min-h-screen'>
       <p className='font-bold text-2xl'>Applicants:</p>
-      <div className='grid grid-cols-1  md:grid-cols-3 mx-auto sm:grid-cols-2 gap-8 mt-10 px-10'>
+      <div className='grid grid-cols-1  md:grid-cols-3 mx-auto sm:grid-cols-2 gap-6 mt-10 px-10'>
         {info?.length === 0 
         ? <h1 className=" px-40 w-full font-bold text-xl pt-20">No Applicant Yet</h1>
         :<>
@@ -68,7 +67,8 @@ export default function Application() {
                   </div>
                   <div className=''>
                     <p className='text-sm text-black font-semibold'>
-                      {job.user?.about?.slice(0, 150) + "..." || ""}
+                      {/* {job.user?.about?.slice(0, 150) + "..." || ""} */}
+                      {job.user?.email}
                     </p>
                   </div>
                   <div className='flex items-center justify-between'>

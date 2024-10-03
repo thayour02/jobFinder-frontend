@@ -78,7 +78,7 @@ const Applicants = () => {
             </div>
                 :
 
-                <div className='container  h-screen mx-auto py-10 flex items-center justify-center pt-20'>
+                <div className='container  mx-auto py-10 flex items-center justify-center pt-20'>
                     <Toaster toastOptions={{duration:3000}} position='top-left'/>
                     <div className='w-full md:w-2/3 2xl:w-2/3 bg-white shadow-lg p-10 pb-20 rounded-lg'>
                         <div className='flex flex-col items-center justify-center mb-8'>

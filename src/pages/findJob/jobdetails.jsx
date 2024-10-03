@@ -369,9 +369,10 @@ export default function Jobdetails() {
                                   </div>
                                 </div>
                                 <div className=''>
-                                  <p className='text-sm text-black font-semibold'>
+                                  {/* <p className='text-sm text-black font-semibold'>
                                     {job.user?.about?.slice(0, 150) + "..." || ""}
-                                  </p>
+                                  </p> */}
+                                  <p>{job.user?.email}</p>
                                 </div>
                                 <div className='flex items-center justify-between'>
                                   <div className="flex  gap-2">
