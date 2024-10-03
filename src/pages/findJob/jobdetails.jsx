@@ -344,7 +344,7 @@ export default function Jobdetails() {
                 <div className='md:flex-row flex flex-wrap gap-3'>
                   {info?.length === 0 
                     ? <h1 className=" p-40 font-bold text-2xl ">No Applicant Yet</h1>
-                    : <div className="grid md:grid-cols-3 gap-4 ">
+                    : <div className="">
                       {
                         info?.map((job, index) => {
                           return <div key={index} >
@@ -370,7 +370,7 @@ export default function Jobdetails() {
                                 </div>
                                 <div className=''>
                                   <p className='text-sm text-black font-semibold'>
-                                    {job.user?.about?.slice(0, 150) + "..." || " "}
+                                    {job.user?.about?.slice(0, 150) + "..." || ""}
                                   </p>
                                 </div>
                                 <div className='flex items-center justify-between'>

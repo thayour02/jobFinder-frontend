@@ -30,9 +30,9 @@ export default function Application() {
     id && fetchApplications()
   })
   return (
-    <div className='w-full grid md:grid-cols-3 gap-4 pt-20 h-screen'>
+    <div className='w-full  gap-4 pt-20 min-h-screen '>
       <p className='font-bold text-2xl'>Applicants:</p>
-      <div className='grid md:grid-cols-3 px-10'>
+      <div className='grid grid-cols-1  md:grid-cols-3 sm:grid-cols-2 gap-8 mt-10'>
         {info?.length === 0 
         ? <h1 className=" px-40 w-full font-bold text-xl pt-20">No Applicant Yet</h1>
         :<>
