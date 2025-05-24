@@ -61,7 +61,6 @@ function App() {
         <Route path="/applicant-profile/:applicationId/:userId" element={<Applicants />}/>
         <Route path="/reset-password" element={<Reset />} />
         <Route path="/reset-password/:id/:token" element={<ResetPassword />} />
-
       </Routes>
        <Footer />
     </main>

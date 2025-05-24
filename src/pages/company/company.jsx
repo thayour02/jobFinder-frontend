@@ -82,7 +82,7 @@ export default function Company() {
                 {recordsCount} </span>Companies Available</p>
                 </div>
             <div className="flex items-center justify-between gap-2 md:gap-2 md:items-center">
-                <p className="text:sm md:text-base font-medium "> Sort By:</p>
+                <p className="text:sm md:text-base font-medium"> Sort By:</p>
                 <ListBox sort={sort} setSort={setSort} />
             </div>
             </div>

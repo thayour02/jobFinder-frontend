@@ -8,7 +8,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Login } from '../../redux/slice'
 import { GlobalContext } from "../../context";
-import  { Toaster,toast } from "react-hot-toast"
+import { Toaster, toast } from "react-hot-toast"
 // import EmailVerify from './emailVerify'
 
 const SignUp = () => {
@@ -21,7 +21,7 @@ const SignUp = () => {
     const dispatch = useDispatch()
     const location = useLocation()
 
-     location.state?.from?.pathname || '/find-jobs'
+    location.state?.from?.pathname || '/find-jobs'
 
     const {
         register,
@@ -56,28 +56,30 @@ const SignUp = () => {
             if (res?.status === false) {
                 toast.error(res?.message)
                 setLoading(false)
-            } else{
-                if(isRegister){
-                const data = { token: res?.token, ...res?.user };
-                dispatch(Login(data));
-                localStorage.setItem("userInfo", JSON.stringify(data))
-                window.location.replace("/verify-email")
-                toast.success(res?.message)
-                setTimeout(()=>{
-                    window.location.replace('/find-jobs')
-                },1500)
-                }else{
-                const data = { token: res?.token, ...res?.user };
-                dispatch(Login(data));
-                localStorage.setItem("userInfo", JSON.stringify(data))
-                window.location.replace("/find-jobs")
-                toast.success(res?.message)
+            } else {
+                if (isRegister) {
+                    const data = { token: res?.token, ...res?.user };
+                    dispatch(Login(data));
+                    localStorage.setItem("userInfo", JSON.stringify(data))
+                    window.location.replace("/verify-email")
+                    toast.success(res?.message)
+                    setTimeout(() => {
+                        window.location.replace('/find-jobs')
+                    }, 1500)
+                } else {
+                    const data = { token: res?.token, ...res?.user };
+                    dispatch(Login(data));
+                    localStorage.setItem("userInfo", JSON.stringify(data))
+                    window.location.replace("/find-jobs")
+                    toast.success(res?.message)
                 }
             }
         } catch (error) {
-             return error
+            return error
         }
     };
+
+
     return (
         <div className="min-h-full  md:w-full mx-10 px-2 max-w-md w-5/6 items-center flex justify-center pt-10">
             <div className='inset-0 overflow-y-auto'>
@@ -87,7 +89,7 @@ const SignUp = () => {
                         <div className='text-xl font-semibold px-4 '>
                             {isRegister ? "Create Account" : "Account Sign In"}
                         </div>
-                        <Toaster position="top-left" toastOptions={{duration: 9000}}/>
+                        <Toaster position="top-left" toastOptions={{ duration: 9000 }} />
                         <div>
                             {errorMsg && (
                                 <span
@@ -103,7 +105,7 @@ const SignUp = () => {
                                     ? "bg-purple-200 text-black-500"
                                     : "bg-white border border-black"
                                 }`} onClick={() => setAccountType('Seeker')}>
-                                Seeker 
+                                Seeker
                             </button>
                             <button className={`flex-1 px-4 py-2
                             rounded text-sm outline-none 
@@ -269,7 +271,7 @@ const SignUp = () => {
                     </div>
                 </div>
             </div>
-                                    
+
         </div>
     )
 };

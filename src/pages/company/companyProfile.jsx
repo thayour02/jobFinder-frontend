@@ -1,8 +1,8 @@
 import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
 import { GlobalContext } from '../../context'
-import { useParams } from 'react-router-dom'
+// import { useParams } from 'react-router-dom'
 import CustomButton from '../../component/customButton'
-import Loading from '../../component/loading'
+// import Loading from '../../component/loading'
 import { FiEdit3, FiPhoneCall, FiUpload } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 import { AiOutlineMail } from 'react-icons/ai'
@@ -329,7 +329,7 @@ export default function CompanyProfile() {
                     }
                 </div>
             </div>
-            <CompanyForm opem={open} setOpen={setOpen} />
+            <CompanyForm open={open} setOpen={setOpen} />
         </div>
     )
 }

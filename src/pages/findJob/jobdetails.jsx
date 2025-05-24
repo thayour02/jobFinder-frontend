@@ -127,6 +127,7 @@ const ApplicationForm = () => {
 
   )
 }
+
 export default function Jobdetails() {
   const { id } = useParams();
   const { user } = useSelector((state) => state.user)
@@ -332,8 +333,7 @@ export default function Jobdetails() {
                     title='Apply Now'
                     onClick={() => setOpen(true)}
                     containerStyles={`w-full items-center flex justify-center bg-black text-white py-3 px-5 
-                   rounded-full text-base outline-none hover:bg-purple-800`} />)
-
+                   rounded-full text-base outline-none hover:bg-purple-800`}/>)
                 }
               </div>
             </div>
