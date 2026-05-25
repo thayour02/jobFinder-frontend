@@ -179,14 +179,41 @@ useEffect(()=>{
           </div>
            <div className="w-full md:flex flex-wrap gap-4">
               {
-                data?.map((job, index) => {
-                  const newJob = {
-                    name: job?.company?.name,
-                    logo: job?.company?.profileUrl,
-                    ...job,
-                  }
-                  return <JobCard job={newJob} key={index} />
-                })
+                data && data.length > 0 ? (
+                  data?.map((job, index) => {
+                    const newJob = {
+                      name: job?.company?.name,
+                      logo: job?.company?.profileUrl,
+                      ...job,
+                    }
+                    return <JobCard job={newJob} key={index} />
+                  })
+                ) : !isfetching && (
+                  <div className="w-full flex flex-col items-center justify-center py-16">
+                    <div className="text-center">
+                      <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <BiBriefcaseAlt2 className="w-10 h-10 text-gray-400" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">No Jobs Available</h3>
+                      <p className="text-gray-600 mb-4 max-w-md">
+                        There are currently no job postings matching your criteria. Try adjusting your filters or check back later for new opportunities.
+                      </p>
+                      <button 
+                        onClick={() => {
+                          setSearchQuery('');
+                          setCmpLocation('');
+                          setFilterJobTypes([]);
+                          setFilterExp([]);
+                          setSort('Newest');
+                          setPage(1);
+                        }}
+                        className="text-purple-600 hover:text-purple-700 font-medium underline"
+                      >
+                        Clear all filters
+                      </button>
+                    </div>
+                  </div>
+                )
               }
             </div>  
             {isfetching &&(

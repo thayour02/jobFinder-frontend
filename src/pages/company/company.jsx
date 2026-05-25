@@ -5,6 +5,7 @@ import CustomButton from "../../component/customButton"
 import { apiRequest, updateUrl } from '../../utils/store'
 import { useLocation, useNavigate, } from "react-router-dom"
 import { AiOutlineLoading3Quarters } from "react-icons/ai"
+import { Building } from "react-icons/ai"
 import Head from "../../component/header"
 import { Link } from "react-router-dom"
 import toast, { Toaster } from "react-hot-toast"
@@ -90,35 +91,61 @@ export default function Company() {
                 <div className="mt-10 flex justify-center px-40" disabled={isFetching}>
                     <AiOutlineLoading3Quarters size={100} className="align-items-center animate-spin" />
                 </div> : <div className="w-full flex flex-col">
-                    {data?.map((com, index) => (
-                        <div key={index} className='w-full h-16 flex gap-4 items-center justify-between bg-white shadow-md mt-4 rounded'>
-                        <div className='w-3/4 md:w-2/4 px-4 flex gap-4 items-center'>
-                            <Link to={`/company-profile/${com?._id}`}>
-                                <img src={com?.profileUrl}  alt={com?.name} 
-                                className='w-8 md:w-13 h-8 md:h-13 rounded truncate'/>
-                            </Link>
-                            <div className='h-full flex flex-col'>
-                                <Link to={`/company-profile/${com?._id}`}
-                                className='text-base md:text-lg font-semibold text-black truncate'>
-                                    {com?.name}
-                                </Link>
-                                    <span className='text-base text-purple-500'>{com?.email}</span>
-                            </div>
+                    {data && data.length > 0 ? (
+                      data?.map((com, index) => (
+                          <div key={index} className='w-full h-16 flex gap-4 items-center justify-between bg-white shadow-md mt-4 rounded'>
+                          <div className='w-3/4 md:w-2/4 px-4 flex gap-4 items-center'>
+                              <Link to={`/company-profile/${com?._id}`}>
+                                  <img src={com?.profileUrl}  alt={com?.name} 
+                                  className='w-8 md:w-13 h-8 md:h-13 rounded truncate'/>
+                              </Link>
+                              <div className='h-full flex flex-col'>
+                                  <Link to={`/company-profile/${com?._id}`}
+                                  className='text-base md:text-lg font-semibold text-black truncate'>
+                                      {com?.name}
+                                  </Link>
+                                      <span className='text-base text-purple-500'>{com?.email}</span>
+                              </div>
+                          </div>
+                          
+                          <div className='hidden md:flex w-1/4 h-full items-center'>
+                              <p className='text-base text-start'>{com?.location}</p>
+                          </div>
+                          <div className='w-1/4 h-full flex flex-col items-center mt-6'>
+                              <p className='text-purple-500 font-bold'>{com?.jobPosts?.length}</p>
+                              <span className='text-xs md:base font-semibold'>Job Posted</span>
+                          </div>
+                      </div>
+                          ))
+                    ) : (
+                      <div className="w-full flex flex-col items-center justify-center py-16">
+                        <div className="text-center">
+                          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Building className="w-10 h-10 text-gray-400" />
+                          </div>
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">No Companies Available</h3>
+                          <p className="text-gray-600 mb-4 max-w-md">
+                            There are currently no companies registered on our platform. Check back later or encourage companies to join our community.
+                          </p>
+                          <button 
+                            onClick={() => {
+                              setSearchQuery('');
+                              setCmpLocation('');
+                              setSort('Newest');
+                              setPage(1);
+                            }}
+                            className="text-purple-600 hover:text-purple-700 font-medium underline"
+                          >
+                            Clear all filters
+                          </button>
                         </div>
-                        
-                        <div className='hidden md:flex w-1/4 h-full items-center'>
-                            <p className='text-base text-start'>{com?.location}</p>
-                        </div>
-                        <div className='w-1/4 h-full flex flex-col items-center mt-6'>
-                            <p className='text-purple-500 font-bold'>{com?.jobPosts?.length}</p>
-                            <span className='text-xs md:base font-semibold'>Job Posted</span>
-                        </div>
-                    </div>
-                        ))
-                    }
-                    <p className="mt-6 font-medium" >
-                        {data?.length} records out of {recordsCount}
-                    </p>
+                      </div>
+                    )}
+                    {data && data.length > 0 && (
+                      <p className="mt-6 font-medium" >
+                          {data?.length} records out of {recordsCount}
+                      </p>
+                    )}
                 </div>
             }
 
