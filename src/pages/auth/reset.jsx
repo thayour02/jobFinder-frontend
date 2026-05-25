@@ -47,10 +47,9 @@ export default function Reset() {
         toast.success(reset?.message)
         setLoading(false)
       }
-      console.log(reset)
-
+      
     } catch (error) {
-      console.log(error)
+      // Handle error
     }
   }
   return (

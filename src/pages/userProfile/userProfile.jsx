@@ -270,8 +270,7 @@ export default function UserProfile() {
         })
         setInfo(res?.data)
       } catch (error) {
-        console.log(error)
-        setLoading(false)
+                setLoading(false)
       }
     }
     fetchUserProfile()
@@ -293,7 +292,8 @@ export default function UserProfile() {
           window.location.replace('/auth')
         }
       } catch (error) {
-        return console.log(error)
+        // Handle error
+        return
       }
     }
   }

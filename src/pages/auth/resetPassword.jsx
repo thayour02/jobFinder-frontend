@@ -52,7 +52,7 @@ export default function ResetPassword() {
                 }, 1500);
             }
         } catch (error) {
-            console.log(error)
+            // Handle error
         }
     }
     return (
