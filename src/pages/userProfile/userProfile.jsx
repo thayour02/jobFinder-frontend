@@ -16,7 +16,7 @@ import { FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { Link } from 'react-router-dom'
 import { FiEdit3 } from 'react-icons/fi'
-import ProfileImage from '../../component/ProfileImage'
+import NoProfile from '../../assets/images.jpeg'
 import { TiUserDelete } from "react-icons/ti";
 import { toast, Toaster } from "react-hot-toast"
 import { useEffect } from 'react'
@@ -396,7 +396,9 @@ export default function UserProfile() {
                   animate="visible"
                   transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
                      className='w-full md:w-1/3 mt-10  flex flex-col items-center'>
-                      <ProfileImage profileUrl={info?.profileUrl} className='h-40 w-48 object-container bg-white' />
+                      <img src={info?.profileUrl || NoProfile}
+                        className='h-40 w-48  object-container 
+                       rounded-md bg-white' alt={info?.profileUrl || NoProfile} />
                       <div className='flex text-base  gap-2 mt-10 -ml-8'>
                         <CustomButton
                           onClick={() => setOpen(true)}

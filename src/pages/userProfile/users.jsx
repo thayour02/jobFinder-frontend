@@ -8,6 +8,7 @@ import { useLocation, useNavigate, } from "react-router-dom"
 import { AiOutlineLoading3Quarters } from "react-icons/ai"
 import Head from "../../component/header"
 import toast, { Toaster } from "react-hot-toast"
+import Pagination from "../../component/Pagination"
 
 
 export default function User() {
@@ -34,8 +35,9 @@ export default function User() {
             location: location
         })
         try {
+            const queryParams = new URLSearchParams(location.search);
             let user = await apiRequest({
-                url:"/users"+ newURL,
+                url:`/users?${queryParams.toString()}`,
                 method: "GET",
             })
             setNumPage(user?.numPage)
@@ -56,8 +58,8 @@ export default function User() {
         e.preventDefault()
       await fetchUser() 
     }
-    const handleShowMore = async()=>{
-        setPage((prev)=> prev+1)
+    const handleShowMore = async(newPage)=>{
+        setPage(newPage)
     }
 
     
@@ -121,18 +123,16 @@ export default function User() {
                 </div>
             }
 
-            {
-                numPage > page && !isFetching && (
-                    <div className="w-full flex items-center justify-center pt-16">
-                         <CustomButton
-                            title='Load More'
-                            onClick={handleShowMore}
-                            containerStyles='text-purple-700 py-1.5 px-5 focus:outline-none 
-                            hover:bg-purple-700 hover:text-white 
-                             hover:border-0 font-bold rounded-full border
-                              border-purple-700 '/>
-                    </div>
-                )}
+            {numPage > 1 && (
+                <div className="w-full flex items-center justify-center pt-16">
+                    <Pagination 
+                        currentPage={page}
+                        totalPages={numPage}
+                        onPageChange={handleShowMore}
+                        loading={isFetching}
+                    />
+                </div>
+            )}
                
         </div>
     )

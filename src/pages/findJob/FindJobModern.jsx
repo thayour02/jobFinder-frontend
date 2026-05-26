@@ -21,6 +21,7 @@ import {
   Heart,
   Share2
 } from 'lucide-react';
+import Pagination from '../../component/Pagination';
 
 const JobCard = ({ job }) => {
   const postedDate = new Date(job.createdAt).toLocaleDateString();
@@ -372,24 +373,15 @@ export default function FindJobModern() {
           </div>
         )}
 
-        {/* Load More Button */}
-        {!loading && jobs.length > 0 && page < Math.ceil(recordsCount / 10) && (
+        {/* Pagination */}
+        {Math.ceil(recordsCount / 10) > 1 && (
           <div className="text-center mt-8">
-            <Button 
-              onClick={handleShowMore} 
-              disabled={isFetching}
-              variant="outline"
-              size="lg"
-            >
-              {isFetching ? (
-                <>
-                  <LoadingSpinner size="sm" className="mr-2" />
-                  Loading...
-                </>
-              ) : (
-                'Load More Jobs'
-              )}
-            </Button>
+            <Pagination 
+              currentPage={page}
+              totalPages={Math.ceil(recordsCount / 10)}
+              onPageChange={handleShowMore}
+              loading={isFetching}
+            />
           </div>
         )}
       </div>

@@ -10,6 +10,7 @@ import { GlobalContext } from "../../context";
 import { AiOutlineLoading3Quarters } from "react-icons/ai"
 import { apiRequest, updateUrl } from "../../utils/store";
 import CustomButton from "../../component/customButton";
+import Pagination from "../../component/Pagination";
 
 export default function FindJob() {
   const [sort, setSort] = useState('Newest');
@@ -42,8 +43,9 @@ export default function FindJob() {
         location: location,
     });
     try {
+        const queryParams = new URLSearchParams(location.search);
         const res = await apiRequest({
-            url: "/jobs" + newURL,
+            url: `/jobs?${queryParams.toString()}`,
             method: "GET"
         });
         setNumPage(res?.numPage);
@@ -95,9 +97,8 @@ useEffect(()=>{
     await fetchJob()
   }
 
-  const handleShowMore = async (e) => {
-    e.preventDefault();
-    setPage((prev) => prev + 1)
+  const handleShowMore = async (newPage) => {
+    setPage(newPage)
   }
   return (
     <div className="pt-20 overflow-y-auto">
@@ -221,15 +222,16 @@ useEffect(()=>{
                  <AiOutlineLoading3Quarters size={100} className="align-items-center animate-spin" />
                </div>  
             )}
-             {numPage > page && !isfetching && (
-                  <div className="w-full flex items-center justify-center pt-16">
-                    <CustomButton
-                      title='Load More'
-                      onClick={handleShowMore}
-                      containerStyles={`text-blue-600 py-1.5 px-5 focus:outline-none hover:bg-purple-700 
-                      hover:text-white rounded-full text-base border border-purple-600`} />
-                  </div>
-                )}
+             {numPage > 1 && (
+                <div className="w-full flex items-center justify-center pt-16">
+                    <Pagination 
+                        currentPage={page}
+                        totalPages={numPage}
+                        onPageChange={handleShowMore}
+                        loading={isfetching}
+                    />
+                </div>
+            )}
         </div>
       </div>
     </div>

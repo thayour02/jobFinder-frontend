@@ -8,7 +8,6 @@ import img from '../assets/tayo.webp'
 import { Link } from 'react-router-dom';
 import { Menu, Transition } from "@headlessui/react"
 import CustomButton from './customButton';
-import ProfileImage from './ProfileImage'
 import './stlye.css'
 // import NoProfile from '../assets/images.jpeg'
 import { GlobalContext } from '../context/index';
@@ -32,21 +31,8 @@ function MenuList() {
                 <div className="flex items-center gap-8">
                     <Menu.Button className='inline-flex gap-2 w-full rounded-md md:px-4
                          py-2 text-sm font-medium text-white border-0 bg-purple-900 b hover:bg-white hover:text-purple-700'>
-                        {user?.accountType === "Seeker" ?
-                            <div className="leading[80px] flex flex-col items-start px-2">
-                                <div className='flex items-center'>
-                                    <p className="text-sm font-semibold">{user?.firstName ?? user?.lastname}</p>
-                                    <div>
-                                        {user?.isVerified === true
-                                            ? <FcApproval  />
-                                            : <MdOutlineVerified  />
-                                        }
-                                    </div>
-                                </div>
-                                <span>{user?.jobTitle ?? user?.email}</span>
-                            </div>
-                            : <div className="leading[80px] flex flex-col items-start">
-                                <div className='flex items-center space-x-1'>
+                        <div className="leading[80px] flex flex-col items-start px-2">
+                            <div className="flex items-center space-x-1">
                                 <p className="text-sm font-semibold">{user?.name}</p>
                                 <div>
                                         {user?.isVerified === true
@@ -56,11 +42,11 @@ function MenuList() {
                                     </div>
                                 </div>
                                 <span>{user?.email}</span>
-                            </div>}
+                            </div>
 
                         <div className='flex gap-6'>
-                            <img src={user?.profileUrl || <CgProfile />} className='h-6 w-6' alt="" />
-                            <ProfileImage profileUrl={user?.profileUrl} alt={user?.profileUrl} />
+                            <img src={user?.profileUrl}
+                                className='h-10 w-10 rounded-md ' alt={user?.profileUrl} />
                             <BiChevronDown className='h-8 w-8' />
                         </div>
                     </Menu.Button>
@@ -76,7 +62,7 @@ function MenuList() {
                         <div className='p-1'>
                             <Menu.Item>
                                 {({ active }) => (
-                                    <Link to={`${user?.accountType ? "/user-profile" : "/company-profile"
+                                    <Link to={`${user?.accountType ? "/company-profile" : "/company-profile"
                                         }`} className={`${active ? "bg-purple-700 text-white" :
                                             "text-gray-700"} group w-full 
                                             items-center rounded-md p-2 text-sm flex`}
@@ -84,7 +70,7 @@ function MenuList() {
                                         <CgProfile
                                             className={`${active ? "text-white" :
                                                 "text-gray-700"} mr-2 h-5 w-5`} aria-hidden='true' />
-                                        {user?.accountType ? "user profile" : "company profile"}
+                                        {user?.accountType ? "company profile" : "company profile"}
                                     </Link>
                                 )}
                             </Menu.Item>
@@ -151,12 +137,9 @@ export default function Navbar() {
                                 </Link>
                             </li>
                         ))}
-                        <Link className=' font-bold  ' onClick={handleCloseBar} to={
-                            user?.accountType === 'Seeker' ? '/find-users' : "/upload-job"
-                        }>
-                            {user?.accountType === "Seeker" ? "Seeker" : "Post Job"}
-                        </Link>
-                    </ul>
+                        <Link className=' font-bold  ' onClick={handleCloseBar} to="/upload-job">
+                            Post Job
+                        </Link>                    </ul>
 
                     <div className='hidden lg:block'>
                         {!user?.token ? (
@@ -188,11 +171,9 @@ export default function Navbar() {
                     <Link className=' font-semibold text-xl' to='/company' onClick={handleCloseBar}>
                         Company
                     </Link>
-                    <Link className=' font-semibold text-xl' onClick={handleCloseBar} to={
-                        user?.accountType === 'Seeker' ? '' : "/upload-job"
-                    }>
-                        {user?.accountType === "Seeker" ? "" : "Post Job"}
-                    </Link>
+                    <Link className=' font-semibold text-xl ' onClick={handleCloseBar} to={user?.accountType ? "/upload-job" : ""}>
+                        {user?.accountType ? "Post Job" : ""}
+                    </Link>          
                     <Link className=' font-semibold text-xl' to='/about-us' onClick={handleCloseBar}>
                         About
                     </Link>

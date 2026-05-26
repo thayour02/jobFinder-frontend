@@ -9,6 +9,7 @@ import { AiOutlineHome } from "react-icons/ai"
 import Head from "../../component/header"
 import { Link } from "react-router-dom"
 import toast, { Toaster } from "react-hot-toast"
+import Pagination from "../../component/Pagination"
 
 
 
@@ -25,15 +26,15 @@ export default function Company() {
     const { searchQuery, setSearchQuery,cmpLocation, setCmpLocation} = useContext(GlobalContext)
     const { numPage, setNumPage, } = useContext(GlobalContext)
 
-    // show more function
-    const handleShowMore = async()=>{
-        setPage((prev)=> prev+1)
+    // pagination function
+    const handleShowMore = async(newPage)=>{
+        setPage(newPage)
     }
 
     // fetch Company
     const fetchCompany = useCallback(async () => {
         setIsFetching(true)
-        const newURL = updateUrl({
+        updateUrl({
             pageNum: page,
             query: searchQuery,
             cmpLoc: cmpLocation,
@@ -41,9 +42,10 @@ export default function Company() {
             navigate: navigate,
             location: location
         })
+        const queryParams = new URLSearchParams(location.search);
         try {
             let companies = await apiRequest({
-                url: newURL,
+                url: `/company?${queryParams.toString()}`,
                 method: "GET",
             })
             setNumPage(companies?.numPage)
@@ -149,18 +151,16 @@ export default function Company() {
                 </div>
             }
 
-            {
-                numPage > page && !isFetching && (
-                    <div className="w-full flex items-center justify-center pt-16">
-                         <CustomButton
-                            title='Load More'
-                            onClick={handleShowMore}
-                            containerStyles='text-purple-700 py-1.5 px-5 focus:outline-none 
-                            hover:bg-purple-700 hover:text-white 
-                             hover:border-0 font-bold rounded-full border
-                              border-purple-700 '/>
-                    </div>
-                )}
+            {numPage > 1 && (
+                <div className="w-full flex items-center justify-center pt-16">
+                    <Pagination 
+                        currentPage={page}
+                        totalPages={numPage}
+                        onPageChange={handleShowMore}
+                        loading={isFetching}
+                    />
+                </div>
+            )}
                
         </div>
     )

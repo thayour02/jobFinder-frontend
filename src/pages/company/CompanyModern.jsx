@@ -9,6 +9,7 @@ import { Input } from '../../components/ui/Input';
 import { LoadingSpinner, LoadingCard } from '../../components/ui/Loading';
 import { Badge } from '../../components/ui/Badge';
 import { Search, MapPin, Building, Users, Briefcase } from 'lucide-react';
+import Pagination from '../../component/Pagination';
 
 const CompanyCard = ({ company }) => {
   return (
@@ -260,24 +261,15 @@ export default function CompanyModern() {
           </div>
         )}
 
-        {/* Load More Button */}
-        {!loading && companies.length > 0 && page < numPage && (
+        {/* Pagination */}
+        {numPage > 1 && (
           <div className="text-center mt-8">
-            <Button 
-              onClick={handleShowMore} 
-              disabled={isFetching}
-              variant="outline"
-              size="lg"
-            >
-              {isFetching ? (
-                <>
-                  <LoadingSpinner size="sm" className="mr-2" />
-                  Loading...
-                </>
-              ) : (
-                'Load More Companies'
-              )}
-            </Button>
+            <Pagination 
+              currentPage={page}
+              totalPages={numPage}
+              onPageChange={handleShowMore}
+              loading={isFetching}
+            />
           </div>
         )}
       </div>
