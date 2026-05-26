@@ -45,7 +45,7 @@ export default function FindJob() {
     try {
         const queryParams = new URLSearchParams(location.search);
         const res = await apiRequest({
-            url: `/jobs?${queryParams.toString()}`,
+            url: `/jobs/find-jobs?${queryParams.toString()}`,
             method: "GET"
         });
         setNumPage(res?.numPage);
