@@ -55,7 +55,7 @@ export const updateUrl = ({
   exp,
 }) => {
   const params = new URLSearchParams();
-  if(pageNum && pageNum >1){
+  if(pageNum){
       params.set("page", pageNum);
   }
   if(query){

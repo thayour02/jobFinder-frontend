@@ -61,11 +61,8 @@ const SignUp = () => {
                     const data = { token: res?.token, ...res?.user };
                     dispatch(Login(data));
                     localStorage.setItem("userInfo", JSON.stringify(data))
-                    window.location.replace("/verify-email")
+                    window.location.replace("/")
                     toast.success(res?.message)
-                    setTimeout(() => {
-                        window.location.replace('/find-jobs')
-                    }, 1500)
                 } else {
                     const data = { token: res?.token, ...res?.user };
                     dispatch(Login(data));

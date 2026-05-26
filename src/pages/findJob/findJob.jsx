@@ -60,7 +60,7 @@ export default function FindJob() {
 
 useEffect(()=>{
   fetchJob()
-},[fetchJob])
+},[page, searchQuery, cmpLocation, sort, filterJobTypes, filterExp])
   //FILTERJOBTYPES
   const filterJob = async (e) => {
     if (filterJobTypes?.includes(e)) {
@@ -99,6 +99,7 @@ useEffect(()=>{
 
   const handleShowMore = async (newPage) => {
     setPage(newPage)
+    // fetchJob will be called automatically by useEffect when page changes
   }
   return (
     <div className="pt-20 overflow-y-auto">
