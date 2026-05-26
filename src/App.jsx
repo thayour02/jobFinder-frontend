@@ -51,7 +51,7 @@ function App() {
         <Route path="/" element={<Home />}/>
         <Route path='/find-jobs' element={<FindJob />} />
         <Route path='/company' element={<Company />} />
-        <Route path="/find-users" element={<User/>}/>
+        {/* <Route path="/find-users" element={<User/>}/> */}
         <Route path='/about-us' element={<About />} />
         <Route path='/auth' element={<Auth />} />
         <Route path="/verify-email/:id/:token" element={<EmailVerify />} />

@@ -16,7 +16,7 @@ import { FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { Link } from 'react-router-dom'
 import { FiEdit3 } from 'react-icons/fi'
-import NoProfile from '../../assets/images.jpeg'
+import ProfileImage from '../../component/ProfileImage'
 import { TiUserDelete } from "react-icons/ti";
 import { toast, Toaster } from "react-hot-toast"
 import { useEffect } from 'react'
@@ -269,8 +269,9 @@ export default function UserProfile() {
           token: user?.token
         })
         setInfo(res?.data)
+        setLoading(false)
       } catch (error) {
-                setLoading(false)
+        setLoading(false)
       }
     }
     fetchUserProfile()
@@ -300,7 +301,7 @@ export default function UserProfile() {
   return (
     <div>
       {
-        loading ? <div className="mt-10 flex justify-center px-40" disabled={loading}>
+        loading ? <div className="mt-10 flex justify-center px-40">
           <AiOutlineLoading3Quarters size={100} className="align-items-center text-purple-200 animate-spin w-full h-full" />
         </div>
           : <div>
@@ -395,9 +396,7 @@ export default function UserProfile() {
                   animate="visible"
                   transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
                      className='w-full md:w-1/3 mt-10  flex flex-col items-center'>
-                      <img src={info?.profileUrl || NoProfile}
-                        className='h-40 w-48  object-container 
-                       rounded-md bg-white' alt={info?.profileUrl || NoProfile} />
+                      <ProfileImage profileUrl={info?.profileUrl} className='h-40 w-48 object-container bg-white' />
                       <div className='flex text-base  gap-2 mt-10 -ml-8'>
                         <CustomButton
                           onClick={() => setOpen(true)}

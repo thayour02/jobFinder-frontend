@@ -8,6 +8,7 @@ import img from '../assets/tayo.webp'
 import { Link } from 'react-router-dom';
 import { Menu, Transition } from "@headlessui/react"
 import CustomButton from './customButton';
+import ProfileImage from './ProfileImage'
 import './stlye.css'
 // import NoProfile from '../assets/images.jpeg'
 import { GlobalContext } from '../context/index';
@@ -58,8 +59,8 @@ function MenuList() {
                             </div>}
 
                         <div className='flex gap-6'>
-                            <img src={user?.profileUrl}
-                                className='h-10 w-10 rounded-md ' alt={user?.profileUrl} />
+                            <img src={user?.profileUrl || <CgProfile />} className='h-6 w-6' alt="" />
+                            <ProfileImage profileUrl={user?.profileUrl} alt={user?.profileUrl} />
                             <BiChevronDown className='h-8 w-8' />
                         </div>
                     </Menu.Button>
@@ -188,9 +189,9 @@ export default function Navbar() {
                         Company
                     </Link>
                     <Link className=' font-semibold text-xl' onClick={handleCloseBar} to={
-                        user?.accountType === 'Seeker' ? '/find-users' : "/upload-job"
+                        user?.accountType === 'Seeker' ? '' : "/upload-job"
                     }>
-                        {user?.accountType === "Seeker" ? "Seekers" : "Post Job"}
+                        {user?.accountType === "Seeker" ? "" : "Post Job"}
                     </Link>
                     <Link className=' font-semibold text-xl' to='/about-us' onClick={handleCloseBar}>
                         About

@@ -6,6 +6,7 @@ import { HiLocationMarker } from 'react-icons/hi'
 import { AiOutlineMail } from 'react-icons/ai'
 import { FiPhoneCall } from 'react-icons/fi'
 import { apiRequest } from "../../utils/store"
+import ProfileImage from '../../component/ProfileImage'
 import { AiOutlineLoading3Quarters } from "react-icons/ai"
 import { BsPersonFill } from "react-icons/bs";
 import { FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
