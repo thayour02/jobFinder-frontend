@@ -201,7 +201,7 @@ const HowItWorks = () => {
               
               {/* Arrow connector */}
               {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
+                <div className="hidden md:block absolute top-1/2 -right-8 transform -translate-y-1/2">
                   <ArrowRight className="w-8 h-8 text-purple-300" />
                 </div>
               )}
@@ -224,14 +224,14 @@ const CTASection = () => {
           Join thousands of professionals who have already found their perfect match
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" asChild>
-            <Link to="/find-jobs">
+          <Button size="lg" asChild >
+            <Link to="/find-jobs" className='flex items-center '>
               <Search className="w-5 h-5 mr-2" />
               Start Searching
             </Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
-            <Link to="/auth">
+            <Link to="/auth" className='flex items-center'>
               <Users className="w-5 h-5 mr-2" />
               Create Account
             </Link>
@@ -242,7 +242,7 @@ const CTASection = () => {
   );
 };
 
-export default function HomeModern() {
+export default function Home() {
   return (
     <div className="min-h-screen">
       <HeroSection />

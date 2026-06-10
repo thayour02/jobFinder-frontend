@@ -1,335 +1,457 @@
 import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
 import { GlobalContext } from '../../context'
-// import { useParams } from 'react-router-dom'
-import CustomButton from '../../component/customButton'
-// import Loading from '../../component/loading'
-import { FiEdit3, FiPhoneCall, FiUpload } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
-import { AiOutlineMail } from 'react-icons/ai'
-import { HiLocationMarker } from 'react-icons/hi'
-import { GoLocation } from 'react-icons/go'
-import moment from 'moment'
 import { useForm } from 'react-hook-form'
 import { Dialog, Transition } from '@headlessui/react'
-import TextInput from '../../component/textInput'
 import { useSelector, useDispatch } from 'react-redux'
 import { apiRequest, handleFileUpload } from '../../utils/store'
-import { AiOutlineLoading3Quarters } from "react-icons/ai"
-import { Login } from '../../redux/slice'
-import { toast, Toaster } from "react-hot-toast"
-import { FaDeleteLeft } from "react-icons/fa6";
-import { LogOut } from '../../redux/slice'
+import { Login, LogOut } from '../../redux/slice'
+import { toast } from 'react-hot-toast'
 import { accountType } from '../../utils/data'
-import { FcApproval } from "react-icons/fc";
-import { MdOutlineVerified } from "react-icons/md";
+import moment from 'moment'
+
+import {
+  Building2,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Upload,
+  Pencil,
+  Trash2,
+  Briefcase,
+  X,
+  CheckCircle,
+  Plus,
+} from 'lucide-react'
+
+import { Button } from '../../components/ui/Button'
+import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card'
+import { Input } from '../../components/ui/Input'
+import { Badge } from '../../components/ui/Badge'
+import { LoadingPage, LoadingSpinner } from '../../components/ui/Loading'
 
 
 const CompanyForm = () => {
-    const { open, setOpen } = useContext(GlobalContext)
-    const { user } = useSelector((state) => state.user)
+  const { open, setOpen } = useContext(GlobalContext)
+  const { user } = useSelector((state) => state.user)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: { ...user },
+  })
+  const dispatch = useDispatch()
+  const { loading, setLoading } = useContext(GlobalContext)
+  const [profileImg, setProfileImg] = useState('')
+  const [profileImgName, setProfileImgName] = useState('')
 
-    const { register, handleSubmit, formState: { errors },
-    } = useForm({
-        mode: "onChange",
-        defaultValues: { ...user }
-    });
-    const dispatch = useDispatch()
-    const { loading, setLoading } = useContext(GlobalContext)
-    const [profileImg, setProfileImg] = useState("")
-
-
-    const onSubmit = async (data) => {
-        try {
-            const img = profileImg && (await
-                handleFileUpload(profileImg));
-            const newData = img ? { ...data, profileUrl: img } : data
-            const result = await apiRequest({
-                url: "/update-profile",
-                token: user?.token,
-                data: newData,
-                method: "PUT"
-            })
-            setLoading(false)
-            if (result.status === false) {
-                toast.error({ ...result.error });
-            } else {
-                toast.success(result.message)
-                dispatch(Login(data))
-                localStorage.setItem("userInfo", JSON.stringify(data))
-                setLoading(false)
-                setTimeout(() => {
-                    window.location.reload()
-                }, 1500)
-            }
-        } catch (error) {
-            // Handle error
-            setLoading(false)
+  const onSubmit = async (data) => {
+    setLoading(true)
+    try {
+      let imgUrl = ''
+      if (profileImg) {
+        imgUrl = await handleFileUpload(profileImg)
+        if (!imgUrl) {
+          toast.error('Upload failed')
+          setLoading(false)
+          return
         }
-    };
-    return (
-        <>
-            <Transition appear show={open || false} >
-                <Dialog className="realtive   z-10" as='div' onClose={() => setOpen(false)}>
-                    <Transition.Child
-                        as={Fragment}
-                        enter='ease-out duration-300'
-                        enterFrom='opacity-0'
-                        enterTo='opacity-100'
-                        leave='ease-in duration-200'
-                        leaveFrom='opacity-100'
-                        leaveTo='opacity-0'>
-                        <div className='fixed inset- opacity-bg-25' />
-                    </Transition.Child>
-                    <div className='fixed inset-0 overflow-y-auto'>
-                        <div className='flex min-h-full items-center justify-center p-4 text-center'>
-                            <Transition.Child
-                                as={Fragment}
-                                enter='ease-out duration-300'
-                                enterFrom='opacity-0 scale-95'
-                                enterTo='opacity-100 scale-100'
-                                leave='ease-in duration-200'
-                                leaveFrom='opacity-100 scale-100'
-                                leaveTo='opacity-0 scale-95' className=""
-                            >
-                                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl 
-                                     bg-white mt-20 p-6 text-left align-middle shadow-xl transition-all'>
-                                    <Dialog.Title className='text-xl font-bold  '>
-                                        Edit Company Profile
-                                    </Dialog.Title>
-                                    <form className='w-full mt-2 flex flex-col gap-5'
-                                        onSubmit={handleSubmit(onSubmit)}>
-                                        <TextInput
-                                            name='name'
-                                            label="Name of the company"
-                                            placeholder='eg. Comfort'
-                                            type='text'
-                                            register={register("name", {
-                                                required: 'Company name is required'
-                                            })}
-                                            error={errors.email ? errors.email.message : ""}
-                                        />
-                                        <TextInput
-                                            name='location'
-                                            label="Location/Address"
-                                            placeholder='eg.Lagos'
-                                            type='text'
-                                            register={register("location", {
-                                                required: 'Location is required'
-                                            })}
-                                            error={errors.location ? errors.location.message : ""}
-                                        />
-                                        <TextInput
-                                            name="url"
-                                            label="Company Website"
-                                            placeholder="Company Website"
-                                            type="text"
-                                            register={register("url")}
-                                        />
-                                        <div className='w-1/2 flex gap-2'>
-                                            <TextInput
-                                                name='contact'
-                                                label="Contact"
-                                                placeholder='+234....'
-                                                type='string'
-                                                register={register("contact", {
-                                                    required: 'Contact  is required'
-                                                })}
-                                                error={errors.contact ? errors.contact.message : ""}
-                                            />
-                                            <div className='w-1/2 mt-2'>
-                                                <label className='text-sm mb-1'>Company Logo</label>
-                                                <input type="file"
-                                                    onChange={(e) => setProfileImg(e.target.files[0])} />
-                                            </div>
-                                        </div>
-                                        <div className='flex flex-col'>
-                                            <label htmlFor="" className='mb-1 text-gray-600'>About Your Company</label>
-                                            <textarea name="" id="" className='rounded border border-gray-400
-                                             focus:outline-none focus:border-blue-500 focus:ring-1
-                                             text-base px-4 py-2 resize-none'
-                                                rows={4} cols={6} {...register("about", {
-                                                    required: "write about your company"
-                                                })} aria-invalid={errors.about ? "true" : "false"}>
-                                            </textarea>
-                                            {errors.about && (
-                                                <span className='text-red-400'>{errors.about?.message}</span>
-                                            )}
-                                        </div>
-                                        <div className='mt-2'>
-                                            <CustomButton
-                                                type='submit'
-                                                containerStyles={`inline-flex justify-center 
-                                             rounded-md bg-purple-200 text-xl font-semibold hover:bg-blue-400 w-2/4 h-8`}
-                                                disabled={loading}
-                                                title={
-                                                    loading ? <AiOutlineLoading3Quarters className='w-6 h-6 animate-spin' /> : `Submit`
-                                                } />
-                                        </div>
-                                    </form>
+      }
+      const newData = imgUrl ? { ...data, profileUrl: imgUrl } : data
 
-                                </Dialog.Panel>
-                            </Transition.Child>
-                        </div>
-                    </div>
-                </Dialog>
-            </Transition>
-        </>
-    )
+      const result = await apiRequest({
+        url: '/update-profile',
+        token: user?.token,
+        data: newData,
+        method: 'PUT',
+      })
+
+      if (!result.success) {
+        toast.error(result.message)
+      } else {
+        toast.success(result.message)
+        // Persist the updated profile (incl. the new logo) so redux/localStorage
+        // carry profileUrl after reload.
+        const updatedUser = { ...user, ...(result.user || newData), token: user?.token }
+        dispatch(Login(updatedUser))
+        localStorage.setItem('userInfo', JSON.stringify(updatedUser))
+        setOpen(false)
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
+      }
+    } catch (error) {
+      toast.error(error?.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Transition appear show={open || false}>
+      <Dialog className="relative z-50" as="div" onClose={() => setOpen(false)}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/40" />
+        </Transition.Child>
+
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all">
+                <div className="flex items-center justify-between mb-4">
+                  <Dialog.Title className="text-xl font-bold text-gray-900">
+                    Edit Company Profile
+                  </Dialog.Title>
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <form className="w-full flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">Company Name</label>
+                    <Input
+                      placeholder="eg. Acme Corp"
+                      {...register('name', { required: 'Company name is required' })}
+                    />
+                    {errors.name && (
+                      <span className="text-red-500 text-xs">{errors.name.message}</span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">Location / Address</label>
+                    <Input
+                      placeholder="eg. Lagos"
+                      {...register('location', { required: 'Location is required' })}
+                    />
+                    {errors.location && (
+                      <span className="text-red-500 text-xs">{errors.location.message}</span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">Company Website</label>
+                    <Input placeholder="https://example.com" {...register('url')} />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">Contact</label>
+                    <Input
+                      type="text"
+                      placeholder="+234..."
+                      {...register('contact', { required: 'Contact is required' })}
+                    />
+                    {errors.contact && (
+                      <span className="text-red-500 text-xs">{errors.contact.message}</span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">About Your Company</label>
+                    <textarea
+                      className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                      rows={4}
+                      placeholder="Describe your company..."
+                      {...register('about', { required: 'Please write about your company' })}
+                    />
+                    {errors.about && (
+                      <span className="text-red-500 text-xs">{errors.about.message}</span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">Company Logo</label>
+                    <label className="flex items-center gap-2 cursor-pointer w-fit">
+                      <span className="inline-flex items-center justify-center rounded-md border border-purple-600 text-purple-600 hover:bg-purple-50 h-9 px-3 text-sm font-medium transition-colors">
+                        <Upload className="w-4 h-4 mr-2" />
+                        {profileImgName || 'Choose Logo'}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files[0]
+                          if (file) {
+                            setProfileImg(file)
+                            setProfileImgName(file.name)
+                          }
+                        }}
+                      />
+                    </label>
+                    {profileImgName && (
+                      <span className="text-xs text-gray-500 truncate max-w-xs">{profileImgName}</span>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-2">
+                    <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={loading}>
+                      {loading ? <LoadingSpinner size="sm" className="mr-2" /> : null}
+                      Save Changes
+                    </Button>
+                  </div>
+                </form>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  )
 }
 
+
 export default function CompanyProfile() {
-    const { open, setOpen } = useContext(GlobalContext)
-    const { setLoading } = useContext(GlobalContext)
-    const { info, setInfo } = useContext(GlobalContext)
+  const { open, setOpen } = useContext(GlobalContext)
+  const { loading, setLoading } = useContext(GlobalContext)
+  const { info, setInfo } = useContext(GlobalContext)
+  const { user } = useSelector((state) => state.user)
+  const dispatch = useDispatch()
 
-    const { user } = useSelector((state) => state.user)
-
-    const fetchCompany = useCallback(async () => {
-        setLoading(true)
-        try {
-            let res = await apiRequest({
-                url: "/get-company-profile",
-                method: "GET",
-                token: user?.token
-            })
-            setInfo(res?.data)
-            setLoading(false)
-        } catch (error) {
-            return error;
-        }
-    }, [])
-
-    useEffect(() => {
-        fetchCompany();
-    }, [])
-
-    const dispatch = useDispatch()
-    const handledeleteProfile = async () => {
-        if (window.confirm('Are you sure you want to delete your profile?')) {
-            try {
-                let del = await apiRequest({
-                    url: '/delete-profile',
-                    method: "DELETE",
-                    token: user?.token
-                })
-                if (del.status === false) {
-                    toast.error({ ...del.message })
-                } else {
-                    toast.success(del.message)
-                    dispatch(LogOut())
-                    window.location.replace('/auth')
-                }
-            } catch (error) {
-                return error;
-            }
-        }
+  const fetchCompany = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await apiRequest({
+        url: '/get-company-profile',
+        method: 'GET',
+        token: user?.token,
+      })
+      if (!res.success) {
+        toast.error(res.message)
+        setLoading(false)
+        return
+      }
+      setInfo(res?.data)
+    } catch (error) {
+      toast.error(error?.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
     }
-    return (
-        <div className='conatiner mx-auto p-5'>
-            <div>
-                <Toaster position='top-left' toastOptions={{ duration: 6000 }} />
-                <div className='w-full flex justify-between flex-col md:flex-row gap-3 pt-20'>
-                    <div className='flex items-center'>
-                        <h2 className='text-xl font-semibold'>{info?.name}</h2>
-                        {info?.isVerified === true
-                            ? <FcApproval className='' />
-                            : <MdOutlineVerified className='' />
-                        }
-                    </div>
-                    <Link to={info?.url}>{info?.url || <span>No company website</span>}</Link>
-                    <div>
-                        <CustomButton
-                            onClick={() => setOpen(true)}
-                            iconRight={<FiEdit3 />}
-                            containerStyles={`py-1.5 md:px-5 bg-black/60 text-white  px-3 bg-purple-500 
-                                    rounded-full text-base focus:outline-none hover:bg-white`} />
-                        <Link to='/upload-job'>
-                            <CustomButton
-                                onClick={() => setOpen(true)}
-                                iconRight={<FiUpload />}
-                                containerStyles={`py-1.5 md:px-5 bg-black/60 text-white  px-3 bg-purple-500
-                                        rounded-full text-base focus:outline-none hover:bg-white`} />
-                        </Link>
-                        <CustomButton
-                            onClick={handledeleteProfile}
-                            iconRight={<FaDeleteLeft />}
-                            containerStyles={`py-1.5 md:px-5 bg-black/60 text-white  px-3 bg-purple-500
-                                    rounded-full text-base focus:outline-none hover:bg-white`} />
-                    </div>
-                </div>
-                <div className='w-full flex flex-col md:flex-row justify-start md:justify-between mt-4 md:mt-8 text:sm'>
-                    <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                        <HiLocationMarker />
-                        {info?.location ?? 'No Location'}
-                    </p>
-                    <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                        <AiOutlineMail />
-                        {info?.email ?? "No Emaill"}
-                    </p>
-                    <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                        <FiPhoneCall />
-                        {info?.contact ?? "No Contact"}
-                    </p>
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
+  useEffect(() => {
+    fetchCompany()
+  }, [fetchCompany])
+
+  const handledeleteProfile = async () => {
+    if (window.confirm('Are you sure you want to delete your profile?')) {
+      try {
+        const del = await apiRequest({
+          url: '/delete-profile',
+          method: 'DELETE',
+          token: user?.token,
+        })
+        if (!del.success) {
+          toast.error(del.message)
+        } else {
+          toast.success(del.message)
+          dispatch(LogOut())
+          window.location.replace('/auth')
+        }
+      } catch (error) {
+        toast.error(error?.message || 'Something went wrong')
+      }
+    }
+  }
+
+  if (loading) return <LoadingPage message="Loading company profile..." />
+
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      <div className="max-w-4xl mx-auto px-4 py-8 pt-24">
+
+        {/* Company Header Card */}
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+              {/* Logo */}
+              <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden ring-4 ring-purple-200 flex-shrink-0">
+                {info?.profileUrl ? (
+                  <img
+                    src={info.profileUrl}
+                    alt={info?.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <Building2 className="w-12 h-12 text-purple-400" />
+                )}
+              </div>
+
+              {/* Name / meta */}
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
+                  <h1 className="text-3xl font-bold text-gray-900">{info?.name}</h1>
+                  {info?.isVerified ? (
+                    <CheckCircle className="w-5 h-5 text-purple-600" />
+                  ) : null}
                 </div>
-                <div className='flex flex-col items-center mt-10 md:mt-0'>
-                    <span className='text-xl'>{info?.jobPosts?.length}</span>
-                    <p className='text-purple-500'>Job Post</p>
+
+                {info?.url && (
+                  <a
+                    href={info.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1 text-purple-600 hover:underline mt-1 justify-center md:justify-start"
+                  >
+                    <Globe className="w-4 h-4" />
+                    {info.url}
+                  </a>
+                )}
+
+                <div className="flex flex-wrap gap-4 mt-3 justify-center md:justify-start text-sm text-gray-600">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-purple-500" />
+                    {info?.location || 'No Location'}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Mail className="w-4 h-4 text-purple-500" />
+                    {info?.email || 'No Email'}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Phone className="w-4 h-4 text-purple-500" />
+                    {info?.contact || 'No Contact'}
+                  </span>
                 </div>
+
+                <div className="flex items-center gap-2 mt-3 justify-center md:justify-start">
+                  <Badge className="bg-purple-100 text-purple-700">
+                    <Briefcase className="w-3.5 h-3.5 mr-1" />
+                    {info?.jobPosts?.length || 0} Job{info?.jobPosts?.length !== 1 ? 's' : ''} Posted
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-2 flex-shrink-0 flex-wrap justify-center">
+                <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+                  <Pencil className="w-4 h-4 mr-1" /> Edit
+                </Button>
+                <Link to="/upload-job">
+                  <Button variant="secondary" size="sm">
+                    <Plus className="w-4 h-4 mr-1" /> Post Job
+                  </Button>
+                </Link>
+                <Button variant="destructive" size="sm" onClick={handledeleteProfile}>
+                  <Trash2 className="w-4 h-4 mr-1" /> Delete
+                </Button>
+              </div>
             </div>
-            <div className='w-full mt-20 flex flex-col'>
-                <p className='font-bold'>Job Posted:</p>
-                <div className='grid md:grid-cols-3 gap-4 '>
-                    {
-                        info?.jobPosts?.map((job, index) => {
-                            return (
-                                <>
-                                    <Link key={index} to={`/job-details/${job?._id}`}>
-                                        <div className=' md:w-[20rem] max-w-md
-                                        flex md:h-[18rem] h-[18rem] rounded-md px-3 py-5 flex flex-col 
-                                        bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
+          </CardContent>
+        </Card>
 
-                                            <div className='flex justify-between'>
-                                                <div className='flex gap-3'>
-                                                    <img src={info?.profileUrl}
-                                                        alt={job?.name}
-                                                        className='w-14 h-14 rounded-lg truncate' />
-                                                    <div>
-                                                        <p className='text-black text-lg font-semibold'>{job?.jobTitle}</p>
-                                                        <p className='text-black text-lg font-semibold'>{job?.jobType}</p>
-                                                        <span className='flex gap-2 items-center text-purple-200'>
-                                                            <GoLocation className='text-slate-900 text-sm ' />
-                                                            {job?.location}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                {accountType !== "Seeker" && info._id === user._id
-                                                    ? <h1 className='font-bold text-red-500 -mt-5 font-bold '>{
-                                                        job?.application.length > 0 ? job?.application.length : ""
-                                                    }</h1>
-                                                    : <h1 className='font-bold text-green-500 -mt-5 font-bold '>{job?.vacancy}</h1>
-                                                }
+        {/* About Section */}
+        {info?.about && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="text-purple-700 text-lg">About</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-700 leading-relaxed">{info.about}</p>
+            </CardContent>
+          </Card>
+        )}
 
-                                            </div>
-                                            <div className=''>
-                                                <p className='text-sm text-black font-semibold'>
-                                                    {job?.detail[0]?.desc?.slice(0, 150) + "..."}
-                                                </p>
-                                            </div>
+        {/* Job Posts Section */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Briefcase className="w-5 h-5 text-purple-600" />
+            <h2 className="text-xl font-bold text-gray-800">
+              Jobs Posted
+              <Badge className="ml-2 bg-purple-100 text-purple-700">
+                {info?.jobPosts?.length || 0}
+              </Badge>
+            </h2>
+          </div>
 
-                                            <div className='flex items-center justify-between'>
-                                                <p className='bg-purple-200 text-black py-0.5 px-1.5 rounded font-semibold '>{job?.jobType}</p>
-                                                <span className='text-purple-900 text-sm'>{moment(job?.createdAt).fromNow()}</span>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </>
-                            )
-                        })
-                    }
-                </div>
+          {info?.jobPosts?.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {info.jobPosts.map((job, index) => (
+                <Link key={index} to={`/job-details/${job?._id}`}>
+                  <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+                    <CardContent className="pt-4">
+                      <div className="flex justify-between items-start">
+                        <div className="flex gap-3">
+                          <img
+                            src={info?.profileUrl}
+                            alt={job?.name}
+                            className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                          />
+                          <div>
+                            <p className="font-semibold text-gray-900">{job?.jobTitle}</p>
+                            <p className="text-sm text-gray-500">{job?.jobType}</p>
+                            <span className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+                              <MapPin className="w-3.5 h-3.5" />
+                              {job?.location}
+                            </span>
+                          </div>
+                        </div>
+                        {accountType !== 'Seeker' && info._id === user._id ? (
+                          <span className="text-red-500 font-bold text-sm flex-shrink-0">
+                            {job?.application?.length > 0 ? job.application.length : ''}
+                          </span>
+                        ) : (
+                          <span className="text-green-600 font-bold text-sm flex-shrink-0">
+                            {job?.vacancy}
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-sm text-gray-600 mt-3 line-clamp-2">
+                        {job?.detail?.[0]?.desc?.slice(0, 150)}...
+                      </p>
+
+                      <div className="flex items-center justify-between mt-3">
+                        <Badge className="bg-purple-100 text-purple-700">{job?.jobType}</Badge>
+                        <span className="text-gray-500 text-xs">{moment(job?.createdAt).fromNow()}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
             </div>
-            <CompanyForm open={open} setOpen={setOpen} />
+          ) : (
+            <Card>
+              <CardContent className="py-10 text-center text-gray-500">
+                <Briefcase className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+                No jobs posted yet.{' '}
+                <Link to="/upload-job" className="text-purple-600 hover:underline">
+                  Post your first job
+                </Link>
+              </CardContent>
+            </Card>
+          )}
         </div>
-    )
+      </div>
+
+      <CompanyForm />
+    </div>
+  )
 }

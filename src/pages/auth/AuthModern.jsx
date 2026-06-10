@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { toast } from 'react-hot-toast';
 import { apiRequest } from '../../utils/store';
+import { Login } from '../../redux/slice';
 import { Button } from '../../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
@@ -36,6 +38,7 @@ const AuthModern = () => {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleInputChange = (e) => {
     setFormData({
@@ -49,10 +52,15 @@ const AuthModern = () => {
     setLoading(true);
 
     try {
-      const endpoint = isLogin ? '/auth/login' : '/auth/signup';
-      const payload = isLogin 
+      // Endpoints differ by account type — see backend routes:
+      //   Seeker -> /api/user (authRoutes),  Company -> /api (companyRoutes)
+      const endpoint = isLogin
+        ? accountType === 'Seeker' ? '/user/login' : '/login'
+        : accountType === 'Seeker' ? '/user/signup' : '/reg';
+
+      const payload = isLogin
         ? { email: formData.email, password: formData.password }
-        : accountType === 'Seeker' 
+        : accountType === 'Seeker'
           ? {
               firstName: formData.firstName,
               LastName: formData.LastName,
@@ -73,28 +81,32 @@ const AuthModern = () => {
         data: payload
       });
 
-      if (response.status === false) {
-        toast.error(response.message);
+      if (!response.success) {
+        toast.error(response.message || 'Something went wrong');
+        return;
+      }
+
+      toast.success(response.message || 'Success');
+
+      if (isLogin) {
+        // Backend returns the token as a sibling of `user` — merge them so
+        // redux/localStorage carry `user.token` (what the route guard checks).
+        const userData = { token: response.token, ...response.user };
+        dispatch(Login(userData));
+        localStorage.setItem('userInfo', JSON.stringify(userData));
+        navigate('/');
       } else {
-        toast.success(response.message);
-        
-        if (isLogin) {
-          // Store user data and redirect
-          localStorage.setItem('userInfo', JSON.stringify(response.user));
-          navigate('/');
-        } else {
-          // Redirect to login after successful registration
-          setIsLogin(true);
-          setFormData({
-            email: '',
-            password: '',
-            firstName: '',
-            LastName: '',
-            name: '',
-            location: '',
-            contact: ''
-          });
-        }
+        // After registering, drop back to the sign-in form.
+        setIsLogin(true);
+        setFormData({
+          email: '',
+          password: '',
+          firstName: '',
+          LastName: '',
+          name: '',
+          location: '',
+          contact: ''
+        });
       }
     } catch (error) {
       toast.error('An error occurred. Please try again.');

@@ -1,17 +1,17 @@
-import  ListBox  from "../../component/listBox"
-import { useCallback, useContext, useEffect } from "react"
-import { GlobalContext } from "../../context"
-import CustomButton from "../../component/customButton"
-import { Link } from "react-router-dom"
+import ListBox from '../../component/listBox'
+import { useCallback, useContext, useEffect } from 'react'
+import { GlobalContext } from '../../context'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { apiRequest, updateUrl } from '../../utils/store'
-import { useLocation, useNavigate, } from "react-router-dom"
-import { AiOutlineLoading3Quarters } from "react-icons/ai"
-import Head from "../../component/header"
-import toast, { Toaster } from "react-hot-toast"
-import Pagination from "../../component/Pagination"
+import { toast } from 'react-hot-toast'
+import Head from '../../component/header'
+import Pagination from '../../component/Pagination'
+import { Card, CardContent } from '../../components/ui/Card'
+import { Badge } from '../../components/ui/Badge'
+import { LoadingCard } from '../../components/ui/Loading'
+import { Users, MapPin, Briefcase, User as UserIcon } from 'lucide-react'
 
-
-export default function User() {
+export default function UsersList() {
     const navigate = useNavigate()
     const location = useLocation()
     const { sort, setSort } = useContext(GlobalContext)
@@ -19,121 +19,163 @@ export default function User() {
     const { isFetching, setIsFetching } = useContext(GlobalContext)
     const { recordsCount, setRecordCount } = useContext(GlobalContext)
     const { page, setPage } = useContext(GlobalContext)
-    const { searchQuery, setSearchQuery,cmpLocation, setCmpLocation} = useContext(GlobalContext)
-    const { numPage, setNumPage, } = useContext(GlobalContext)
+    const { searchQuery, setSearchQuery, cmpLocation, setCmpLocation } = useContext(GlobalContext)
+    const { numPage, setNumPage } = useContext(GlobalContext)
 
-
-
-    const fetchUser = useCallback( async () => {
+    const fetchUser = useCallback(async () => {
         setIsFetching(true)
-        const newURL = updateUrl({
+        updateUrl({
             pageNum: page,
             query: searchQuery,
             cmpLoc: cmpLocation,
             sort: sort,
             navigate: navigate,
-            location: location
+            location: location,
         })
-        try {
-            const queryParams = new URLSearchParams(location.search);
-            let user = await apiRequest({
-                url:`/users?${queryParams.toString()}`,
-                method: "GET",
-            })
-            setNumPage(user?.numPage)
-            setRecordCount(user?.total)
-            setData(user?.data)
+        const queryParams = new URLSearchParams(location.search)
+        const res = await apiRequest({
+            url: `/users?${queryParams.toString()}`,
+            method: 'GET',
+        })
+        if (!res.success) {
+            toast.error(res.message)
             setIsFetching(false)
-
-        } catch (error) {
-            return toast(error)
+            return
         }
-    },[page,searchQuery,cmpLocation,sort,navigate,location])
+        setNumPage(res?.numPage)
+        setRecordCount(res?.total)
+        setData(Array.isArray(res?.data) ? res.data : [])
+        setIsFetching(false)
+    }, [page, searchQuery, cmpLocation, sort, navigate, location])
 
     useEffect(() => {
         fetchUser()
-    },[fetchUser])
+    }, [fetchUser])
 
-    const handleSearchSubmit = async (e)=>{
+    const handleSearchSubmit = async (e) => {
         e.preventDefault()
-      await fetchUser() 
+        await fetchUser()
     }
-    const handleShowMore = async(newPage)=>{
+
+    const handleShowMore = (newPage) => {
         setPage(newPage)
     }
 
-    
     return (
-        <div className="container -mb-40 bg-purple-100 mx-auto px-4 py-10  md:px-4  pt-20">
-            <h2 className="text-3xl font-bold mb-2">Remote Companies</h2>
-            <p className="font-semibold mb-4">Dive into our comprehensive collection of remote companies.</p>
-                <div className="mb-10 md:mb-1">
-                    <Head  
-                    handleClick={handleSearchSubmit}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    cmpLocation={cmpLocation}
-                    setCmpLocation={setCmpLocation}
-                    />
-                </div>
-            <div className="flex justify-between items-center px-2 py-2">
-                <div className="">
-                    <Toaster position="top-center" toastOptions={{duration:5000}}/>
-                <p className="text:sm w-full md:text-base  font-medium ">Showing: <span className="font-semibold">
-                {recordsCount} </span>Users Available</p>
-                </div>
-            <div className="flex items-center justify-between gap-2 md:gap-2 md:items-center">
-                <p className="text:sm md:text-base font-medium "> Sort By:</p>
-                <ListBox sort={sort} setSort={setSort} />
-            </div>
-            </div>
-            {isFetching ?
-                <div className="mt-10 flex justify-center px-40" disabled={isFetching}>
-                    <AiOutlineLoading3Quarters size={100} className="align-items-center animate-spin" />
-                </div> : <div className="w-full flex flex-col">
-                    {data?.map((com, index) => (
-                            <Link  to={`/user-profile/${com?._id}`}  key={index} className='w-full h-16 flex gap-4 items-center justify-between bg-white shadow-md mt-4 rounded'>
-                            <div className='w-3/4 md:w-2/4 px-4 flex gap-4 items-center'>
-                                <Link to={`/user-profile/${com?._id}`}>
-                                    <img src={com?.profileUrl}  alt={com?.name} 
-                                    className='w-8 md:w-13 h-8 md:h-13 rounded truncate'/>
-                                </Link>
-                                <div className='h-full flex flex-col'>
-                                    <Link to={`/user-profile/${com?._id}`}
-                                    className='text-base md:text-lg font-semibold text-black truncate'>
-                                        {com?.firstName + " " +  com?.LastName}
-                                    </Link>
-                                        <span className='text-base text-purple-500'>{com?.email}</span>
-                                </div>
-                            </div>
-                            
-                            <div className='hidden md:flex w-1/4 h-full items-center'>
-                                <p className='text-base text-start'>{com?.location}</p>
-                            </div>
-                            <div className='w-1/4 h-full flex flex-col items-center mt-6'>
-                                <p className='text-purple-500 font-bold'>{com?.application?.length}</p>
-                                <span className='text-xs md:base font-semibold'>Job Apply</span>
-                            </div>
-                        </Link>
-                        ))
-                    }
-                    <p className="mt-6 font-medium" >
-                        {data?.length} records out of {recordsCount}
+        <div className="min-h-screen bg-gray-50 pt-20 pb-12">
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                {/* Page Header */}
+                <div className="mb-8">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-2">Browse Seekers</h2>
+                    <p className="text-gray-500 font-medium">
+                        Discover talented professionals from our community.
                     </p>
                 </div>
-            }
 
-            {numPage > 1 && (
-                <div className="w-full flex items-center justify-center pt-16">
-                    <Pagination 
-                        currentPage={page}
-                        totalPages={numPage}
-                        onPageChange={handleShowMore}
-                        loading={isFetching}
+                {/* Search / Filter Bar */}
+                <div className="mb-8">
+                    <Head
+                        handleClick={handleSearchSubmit}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        cmpLocation={cmpLocation}
+                        setCmpLocation={setCmpLocation}
                     />
                 </div>
-            )}
-               
+
+                {/* Results meta row */}
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <p className="text-sm text-gray-600 font-medium">
+                        Showing{' '}
+                        <span className="font-semibold text-gray-900">{recordsCount ?? 0}</span>{' '}
+                        user{recordsCount !== 1 ? 's' : ''} available
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600 font-medium">Sort by:</span>
+                        <ListBox sort={sort} setSort={setSort} />
+                    </div>
+                </div>
+
+                {/* Grid */}
+                {isFetching ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <LoadingCard key={i} />
+                        ))}
+                    </div>
+                ) : data?.length === 0 ? (
+                    <Card>
+                        <CardContent className="p-10 text-center">
+                            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Users className="w-8 h-8 text-purple-400" />
+                            </div>
+                            <p className="text-gray-500 font-medium">No users found matching your criteria.</p>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {data?.map((com, index) => (
+                                <Link key={index} to={`/user-profile/${com?._id}`}>
+                                    <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+                                        <CardContent className="p-5">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                {/* Avatar */}
+                                                <div className="w-14 h-14 rounded-full overflow-hidden bg-purple-100 flex-shrink-0 flex items-center justify-center">
+                                                    {com?.profileUrl ? (
+                                                        <img
+                                                            src={com.profileUrl}
+                                                            alt={`${com?.firstName} ${com?.LastName}`}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    ) : (
+                                                        <UserIcon className="w-7 h-7 text-purple-400" />
+                                                    )}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="font-semibold text-gray-900 truncate">
+                                                        {com?.firstName} {com?.LastName}
+                                                    </p>
+                                                    <p className="text-sm text-purple-500 truncate">{com?.email}</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-wrap gap-2">
+                                                {com?.location && (
+                                                    <Badge variant="secondary" className="flex items-center gap-1 text-xs py-1">
+                                                        <MapPin className="w-3 h-3" />
+                                                        {com.location}
+                                                    </Badge>
+                                                )}
+                                                <Badge variant="outline" className="flex items-center gap-1 text-xs py-1">
+                                                    <Briefcase className="w-3 h-3" />
+                                                    {com?.application?.length ?? 0} applied
+                                                </Badge>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </Link>
+                            ))}
+                        </div>
+
+                        <p className="mt-6 text-sm text-gray-500">
+                            Showing {data?.length} of {recordsCount} records
+                        </p>
+                    </>
+                )}
+
+                {/* Pagination */}
+                {numPage > 1 && (
+                    <div className="w-full flex items-center justify-center pt-10">
+                        <Pagination
+                            currentPage={page}
+                            totalPages={numPage}
+                            onPageChange={handleShowMore}
+                            loading={isFetching}
+                        />
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

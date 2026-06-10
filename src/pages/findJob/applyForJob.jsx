@@ -1,90 +1,129 @@
-import { useContext, useEffect} from "react";
+import { useContext, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom"
+import { useParams, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import moment from "moment";
+import { toast } from "react-hot-toast";
 import { apiRequest } from "../../utils/store";
 import { GlobalContext } from "../../context";
-import { Link } from 'react-router-dom'
-import { GoLocation } from 'react-icons/go'
-import moment from 'moment'
-import { motion } from "framer-motion";
-// import JobCard from "../../component/jobCard";
+import { Card, CardContent } from "../../components/ui/Card";
+import { Badge } from "../../components/ui/Badge";
+import { MapPin, Mail, Users, ArrowRight } from "lucide-react";
 
 export default function Application() {
-  // const { loading, setLoading } = useContext(GlobalContext)
-  const { user } = useSelector((state) => state.user)
-  const { info, setInfo } = useContext(GlobalContext)
-  const { id } = useParams()
+  const { user } = useSelector((state) => state.user);
+  const { info, setInfo } = useContext(GlobalContext);
+  const { id } = useParams();
+
   const fetchApplications = async () => {
-    try {
-      let app = await apiRequest({
-        url: `/jobs/get-applicants/${id}`,
-        method: "GET",
-        token: user?.token
-      })
-      setInfo(app?.data)
-    } catch (error) {
-      return error
+    const res = await apiRequest({
+      url: `/jobs/get-applicants/${id}`,
+      method: "GET",
+      token: user?.token,
+    });
+    if (!res.success) {
+      toast.error(res.message);
+      return;
     }
-  }
+    setInfo(res?.data || []);
+  };
+
   useEffect(() => {
-    id && fetchApplications()
-  },[id])
+    if (id) fetchApplications();
+  }, [id]);
+
   return (
-    <div className='w-full  gap-4 pt-20 min-h-screen'>
-      <p className='font-bold text-2xl'>Applicants:</p>
-      <div className='grid grid-cols-1  md:grid-cols-3 mx-auto sm:grid-cols-2 gap-6 mt-10 px-10'>
-        {info?.length === 0 
-        ? <h1 className=" px-40 w-full font-bold text-xl pt-20">No Applicant Yet</h1>
-        :<>
-          {
-          info?.map((job, index) => {
-            return <div key={index} >
-              <Link to={`/applicant-profile/${job._id}/${job.user?._id}`}>
-                <motion.div 
-                 variants={{
-                  hidden: { opacity: 0, x: 75 },
-                  visible: { opacity: 1, x: 0 }
-              }}
-              initial="hidden"
-              animate="visible"
-              transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
-                className=' md:w-[20rem] max-w-md
-                        flex md:h-[18rem] h-[15rem] rounded-md px-3 py-5 flex flex-col 
-                       bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-10">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+            <Users className="w-6 h-6 text-purple-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Applicants</h1>
+            <p className="text-gray-600 text-sm">
+              {info?.length || 0} candidate{(info?.length || 0) === 1 ? "" : "s"} for this role
+            </p>
+          </div>
+        </div>
 
-                  <div className='flex gap-3'>
-                    <img src={job?.user?.profileUrl}
-                      alt=""
-                      className='w-14 h-14 rounded-lg truncate' />
-                    <div>
-                      <p className='text-black text-lg font-semibold'>{job?.user?.jobTitle || ""}</p>
-                      <p className='text-black text-lg font-semibold'>{job?.user?.firstName}</p>
-                      <span className='flex gap-2 items-center text-purple-200'>
-                        <GoLocation className='text-slate-900 text-sm ' />
-                        {job?.user?.location || " "}
-                      </span>
-                    </div>
-                  </div>
-                  <div className=''>
-                    <p className='text-sm text-black font-semibold'>
-                      {/* {job.user?.about?.slice(0, 150) + "..." || ""} */}
-                      {job.user?.email}
-                    </p>
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <div className="flex gap-6">
-                      <button className='bg-purple-200 text-black py-0.5 px-1.5 rounded font-semibold '>Accept</button>
-                      <button className='bg-purple-200 text-black py-0.5 px-1.5 rounded font-semibold '>Reject</button>
-                    </div>
-                    <span className='text-purple-900 text-sm'>{moment(job?.appliedAt).fromNow()}</span>
-                  </div>
-                </motion.div>
-              </Link>
-            </div>
+        {!info || info.length === 0 ? (
+          <Card>
+            <CardContent className="py-16 text-center">
+              <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-600 font-medium">No applicants yet</p>
+              <p className="text-gray-400 text-sm mt-1">
+                Check back later once candidates start applying.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {info.map((job, index) => (
+              <motion.div
+                key={job._id || index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+              >
+                <Link to={`/applicant-profile/${job._id}/${job.user?._id}`}>
+                  <Card className="h-full transition-all hover:shadow-lg hover:-translate-y-0.5">
+                    <CardContent className="p-5 flex flex-col gap-4 h-full">
+                      <div className="flex items-center gap-4">
+                        {job?.user?.profileUrl ? (
+                          <img
+                            src={job.user.profileUrl}
+                            alt={job?.user?.firstName || "applicant"}
+                            className="w-14 h-14 rounded-full object-cover border border-gray-100"
+                          />
+                        ) : (
+                          <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-semibold text-lg">
+                            {(job?.user?.firstName || "?").charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <p className="font-semibold text-gray-900 truncate">
+                            {job?.user?.firstName} {job?.user?.LastName || ""}
+                          </p>
+                          {job?.user?.jobTitle && (
+                            <Badge variant="secondary" className="mt-1">
+                              {job.user.jobTitle}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
 
-          })}
-        </>}
+                      <div className="space-y-1.5 text-sm text-gray-600">
+                        {job?.user?.location && (
+                          <p className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-gray-400" />
+                            <span className="truncate">{job.user.location}</span>
+                          </p>
+                        )}
+                        {job?.user?.email && (
+                          <p className="flex items-center gap-2">
+                            <Mail className="w-4 h-4 text-gray-400" />
+                            <span className="truncate">{job.user.email}</span>
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="mt-auto flex items-center justify-between pt-3 border-t border-gray-100">
+                        <span className="text-xs text-gray-400">
+                          Applied {moment(job?.appliedAt).fromNow()}
+                        </span>
+                        <span className="flex items-center gap-1 text-sm font-medium text-purple-600">
+                          View <ArrowRight className="w-4 h-4" />
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
-  )
+  );
 }

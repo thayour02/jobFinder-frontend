@@ -1,473 +1,610 @@
-import { useContext, Fragment, useState } from 'react'
+import { useContext, Fragment, useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { GlobalContext } from '../../context'
-import { HiLocationMarker } from 'react-icons/hi'
-import { AiOutlineMail } from 'react-icons/ai'
-import { FiPhoneCall } from 'react-icons/fi'
 import { Transition, Dialog } from '@headlessui/react'
-import TextInput from '../../component/textInput'
-import CustomButton from '../../component/customButton'
 import { useForm } from 'react-hook-form'
-import { apiRequest, handleFileUpload } from "../../utils/store"
-import { Login } from '../../redux/slice'
-import { AiOutlineLoading3Quarters } from "react-icons/ai"
-import { BsPersonFill } from "react-icons/bs";
-import { FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { apiRequest, handleFileUpload } from '../../utils/store'
+import { Login, LogOut } from '../../redux/slice'
+import { toast } from 'react-hot-toast'
 import { Link } from 'react-router-dom'
-import { FiEdit3 } from 'react-icons/fi'
-import NoProfile from '../../assets/images.jpeg'
-import { TiUserDelete } from "react-icons/ti";
-import { toast, Toaster } from "react-hot-toast"
-import { useEffect } from 'react'
-import { GoLocation } from 'react-icons/go'
-import { LogOut } from '../../redux/slice'
-import { FcApproval } from "react-icons/fc";
-import { MdOutlineVerified } from "react-icons/md";
 import { motion } from 'framer-motion'
+import NoProfile from '../../assets/images.jpeg'
 
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Upload,
+  Pencil,
+  Trash2,
+  CheckCircle,
+  Briefcase,
+  X,
+} from 'lucide-react'
+import { FaLinkedin as Linkedin, FaGithub as Github, FaTwitter as Twitter } from 'react-icons/fa'
 
-
+import { Button } from '../../components/ui/Button'
+import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card'
+import { Input } from '../../components/ui/Input'
+import { Badge } from '../../components/ui/Badge'
+import { LoadingPage, LoadingSpinner } from '../../components/ui/Loading'
 
 
 const UserProfileForm = () => {
-  const [profileImg, setProfileImg] = useState("")
+  const [profileImg, setProfileImg] = useState('')
+  const [profileImgName, setProfileImgName] = useState('')
+  const [cvFile, setCvFile] = useState('')
+  const [cvName, setCvName] = useState('')
   const { open, setOpen } = useContext(GlobalContext)
   const [loading, setLoading] = useState(false)
   const { user } = useSelector((state) => state.user)
-  const { register,
+  const {
+    register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    mode: "onChange",
-    defaultValues: { ...user }
-  });
+    mode: 'onChange',
+    defaultValues: { ...user },
+  })
   const dispatch = useDispatch()
 
   const onSubmit = async (data) => {
-    setOpen(false)
+    setLoading(true)
     try {
-      const img = profileImg && (await
-        handleFileUpload(profileImg));
-      const newData = img ? { ...data, profileUrl: img } : data
+      let imgUrl = ''
+      if (profileImg) {
+        imgUrl = await handleFileUpload(profileImg)
+        if (!imgUrl) {
+          toast.error('Image upload failed')
+          setLoading(false)
+          return
+        }
+      }
+
+      let cvUrl = ''
+      if (cvFile) {
+        cvUrl = await handleFileUpload(cvFile, 'raw')
+        if (!cvUrl) {
+          toast.error('CV upload failed')
+          setLoading(false)
+          return
+        }
+      }
+
+      const newData = { ...data }
+      if (imgUrl) newData.profileUrl = imgUrl
+      if (cvUrl) newData.userCv = cvUrl
 
       const result = await apiRequest({
-        url: "/users/update-user",
+        url: '/users/update-user',
         token: user?.token,
         data: newData,
-        method: "PUT"
+        method: 'PUT',
       })
-      
-      if (result.status === false) {
-        toast.error(result.message);
-      } else {
-        toast.success(result.message)
-        dispatch(Login(data))
-        localStorage.setItem("userInfo", JSON.stringify(data))
-        window.location.reload()
+
+      if (!result.success) {
+        toast.error(result.message)
+        return
       }
-      setLoading(false)
+
+      toast.success(result.message)
+      // Persist the server's updated user (keep the existing token) so redux /
+      // localStorage carry the new profileUrl + userCv for applying to jobs.
+      const updatedUser = { ...user, ...(result.user || newData), token: user?.token }
+      dispatch(Login(updatedUser))
+      localStorage.setItem('userInfo', JSON.stringify(updatedUser))
+      setOpen(false)
+      window.location.reload()
     } catch (error) {
-      setLoading(false);
-      return error;
+      toast.error(error?.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
     }
+  }
 
-  };
   return (
-    <>
-      <Transition appear show={open} >
-        <Dialog className="realtive   z-10" as='div' onClose={() => setOpen(false)}>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'>
-            <div className='fixed inset- opacity-bg-25' />
-          </Transition.Child>
-          <div className='fixed w-full inset-0 overflow-y-auto'>
-            <div className='flex min-h-full items-center justify-center p-4 text-center'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 scale-95'
-                enterTo='opacity-100 scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 scale-100'
-                leaveTo='opacity-0 scale-95' className=""
-              >
-                <Dialog.Panel className='max-w-md transform overflow-hidden rounded-2xl 
-               bg-white mt-20 p-6 text-left align-middle shadow-xl transition-all'>
-                  <Dialog.Title className='text-xl font-bold  '>
-                    Edit User Profile
-                  </Dialog.Title>
-                  <form action="" className='w-full mt-2 flex flex-col gap-5'
-                    onSubmit={handleSubmit(onSubmit)}>
-                    <div className='w-full flex gap-2'>
-                      <div className='w-1/2'>
-                        <TextInput
-                          name='firstName'
-                          label="firstName"
-                          placeholder='eg. Comfort'
-                          required={true}
-                          type='text'
-                          register={register("firstName", {
-                            required: 'FirstName is required'
-                          })}
-                          error={errors.firstName ? errors.firstName.message : ""}
-                        />
-                      </div>
-                      <div className='w-1/2'>
-                        <TextInput
-                          name='LastName'
-                          label="LastName"
-                          placeholder='eg. Comfort'
-                          required={true}
-                          type='text'
-                          register={register("LastName", {
-                            required: 'LastName is required'
-                          })}
-                          error={errors.LastName ? errors.LastName.message : ""}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <TextInput
-                        name='location'
-                        label="Location/Address"
-                        placeholder='eg. Lagos'
-                        type='text'
-                        register={register("location", {
-                          required: 'Location is required'
-                        })}
-                        error={errors.location ? errors.location.message : ""}
-                      />
-                    </div>
-                    <div>
-                      <TextInput
-                        name="socialMedia[0]facebook"
-                        label="Facebook"
-                        placeholder="Facebook"
-                        type="text"
-                        register={register("facebook")}
-                      />
-                      <TextInput
-                        name="socialMedia[0]linkedin"
-                        label="linkedin"
-                        placeholder="linkedin"
-                        type="text"
-                        register={register("linkedin")}
-                      />
-                      <TextInput
-                        name="socialMedia[0]twitter"
-                        label="twitter"
-                        placeholder="twitter"
-                        type="text"
-                        register={register("twitter")}
-                      />
-                      <TextInput
-                        name="socialMedia[0]portfolio"
-                        label="portfolio"
-                        placeholder="portfolio"
-                        type="text"
-                        register={register("portfolio")}
-                      />
-                      <TextInput
-                        name="socialMedia[0]github"
-                        label="github"
-                        placeholder="github"
-                        type="text"
-                        register={register("github")}
-                      />
-                    </div>
-                    <div className='w-full flex gap-2'>
-                      <div className='w-1/2'>
-                        <TextInput
-                          name='contact'
-                          label="Contact"
-                          placeholder='Phone Number'
-                          type='Number'
-                          register={register("contact", {
-                            required: 'Contact  is required'
-                          })}
-                          error={errors.contact ? errors.contact.message : ""}
-                        />
-                      </div>
-                      <div className='w-1/2'>
-                        <TextInput
-                          name='jobTitle'
-                          label="JobTitle"
-                          placeholder='eg. software engineer'
-                          type='text'
-                          register={register("jobTitle", {
-                            required: 'jobTitle  is required'
-                          })}
-                          error={errors.jobTitle ? errors.jobTitle.message : ""}
-                        />
-                      </div>
+    <Transition appear show={open}>
+      <Dialog className="relative z-50" as="div" onClose={() => setOpen(false)}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/40" />
+        </Transition.Child>
 
-                    </div>
-                    <div className='flex gap-6'>
-                      <div className='w-1/2 mt-2'>
-                        <label htmlFor="" className='text-sm mb-1'>Upload Picture</label>
-                        <input type="file"
-                          onChange={(e) => setProfileImg(e.target.files[0])} />
-                      </div>
-                    </div>
-                    <div className='flex flex-col'>
-                      <label htmlFor="" className='mb-1 text-gray-600'>About You</label>
-                      <textarea name="" id="" className='rounded border border-gray-400
-                   focus:outline-none focus:border-blue-500 focus:ring-1
-                    text-base px-4 py-2 resize-none' rows={4} cols={6} {...register("about", {
-                        required: "write about you"
-                      })} aria-invalid={errors.about ? "true" : "false"}></textarea>
-                      {errors.about && (
-                        <span className='text-red-400'>{errors.about?.message}</span>
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all">
+                <div className="flex items-center justify-between mb-4">
+                  <Dialog.Title className="text-xl font-bold text-gray-900">
+                    Edit Profile
+                  </Dialog.Title>
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <form className="w-full flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+                  <div className="flex gap-3">
+                    <div className="w-1/2 flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-700">First Name</label>
+                      <Input
+                        placeholder="eg. Comfort"
+                        {...register('firstName', { required: 'First name is required' })}
+                      />
+                      {errors.firstName && (
+                        <span className="text-red-500 text-xs">{errors.firstName.message}</span>
                       )}
                     </div>
-                    <div className='mt-2'>
-                      <CustomButton
-                        type='submit'
-                        containerStyles={`inline-flex justify-center 
-                        rounded-md bg-purple-200 text-xl font-semibold hover:bg-blue-400 w-1/4 h-8 border-2 border-black `}
-                        disabled={loading}
-                        title={
-                          loading ? <AiOutlineLoading3Quarters className='w-6 h-6 animate-spin' /> : `Submit`
-                        }
+                    <div className="w-1/2 flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-700">Last Name</label>
+                      <Input
+                        placeholder="eg. Doe"
+                        {...register('LastName', { required: 'Last name is required' })}
                       />
+                      {errors.LastName && (
+                        <span className="text-red-500 text-xs">{errors.LastName.message}</span>
+                      )}
                     </div>
-                  </form>
+                  </div>
 
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">Location / Address</label>
+                    <Input
+                      placeholder="eg. Lagos"
+                      {...register('location', { required: 'Location is required' })}
+                    />
+                    {errors.location && (
+                      <span className="text-red-500 text-xs">{errors.location.message}</span>
+                    )}
+                  </div>
+
+                  <div className="flex gap-3">
+                    <div className="w-1/2 flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-700">Phone / Contact</label>
+                      <Input
+                        type="number"
+                        placeholder="Phone number"
+                        {...register('contact', { required: 'Contact is required' })}
+                      />
+                      {errors.contact && (
+                        <span className="text-red-500 text-xs">{errors.contact.message}</span>
+                      )}
+                    </div>
+                    <div className="w-1/2 flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-700">Job Title</label>
+                      <Input
+                        placeholder="eg. Software Engineer"
+                        {...register('jobTitle', { required: 'Job title is required' })}
+                      />
+                      {errors.jobTitle && (
+                        <span className="text-red-500 text-xs">{errors.jobTitle.message}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-700">LinkedIn</label>
+                      <Input placeholder="LinkedIn URL" {...register('linkedin')} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-700">GitHub</label>
+                      <Input placeholder="GitHub URL" {...register('github')} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-700">Twitter</label>
+                      <Input placeholder="Twitter URL" {...register('twitter')} />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-sm font-medium text-gray-700">Portfolio</label>
+                      <Input placeholder="Portfolio URL" {...register('portfolio')} />
+                    </div>
+                    <div className="flex flex-col gap-1 col-span-2">
+                      <label className="text-sm font-medium text-gray-700">Facebook</label>
+                      <Input placeholder="Facebook URL" {...register('facebook')} />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">About You</label>
+                    <textarea
+                      className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                      rows={4}
+                      placeholder="Write a short bio..."
+                      {...register('about', { required: 'Please write about yourself' })}
+                    />
+                    {errors.about && (
+                      <span className="text-red-500 text-xs">{errors.about.message}</span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">Profile Picture</label>
+                    <label className="flex items-center gap-2 cursor-pointer w-fit">
+                      <span className="inline-flex items-center justify-center rounded-md border border-purple-600 text-purple-600 hover:bg-purple-50 h-9 px-3 text-sm font-medium transition-colors">
+                        <Upload className="w-4 h-4 mr-2" />
+                        {profileImgName || 'Choose Image'}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files[0]
+                          if (file) {
+                            setProfileImg(file)
+                            setProfileImgName(file.name)
+                          }
+                        }}
+                      />
+                    </label>
+                    {profileImgName && (
+                      <span className="text-xs text-gray-500 truncate max-w-xs">{profileImgName}</span>
+                    )}
+                  </div>
+
+                  {/* CV / Resume */}
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium text-gray-700">CV / Resume</label>
+                    <label className="flex items-center gap-2 cursor-pointer w-fit">
+                      <span className="inline-flex items-center justify-center rounded-md border border-purple-600 text-purple-600 hover:bg-purple-50 h-9 px-3 text-sm font-medium transition-colors">
+                        <Upload className="w-4 h-4 mr-2" />
+                        {cvName || 'Upload CV (PDF / DOC)'}
+                      </span>
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files[0]
+                          if (file) {
+                            setCvFile(file)
+                            setCvName(file.name)
+                          }
+                        }}
+                      />
+                    </label>
+                    {!cvName && user?.userCv && (
+                      <a
+                        href={user.userCv}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-purple-600 hover:underline w-fit"
+                      >
+                        View current CV
+                      </a>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-2">
+                    <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={loading}>
+                      {loading ? <LoadingSpinner size="sm" className="mr-2" /> : null}
+                      Save Changes
+                    </Button>
+                  </div>
+                </form>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
-        </Dialog>
-      </Transition>
-    </>
+        </div>
+      </Dialog>
+    </Transition>
   )
 }
+
 
 export default function UserProfile() {
   const { open, setOpen } = useContext(GlobalContext)
   const [loading, setLoading] = useState(false)
   const { info, setInfo } = useContext(GlobalContext)
-
-
   const { user } = useSelector((state) => state.user)
   const dispatch = useDispatch()
 
-
   useEffect(() => {
     const fetchUserProfile = async () => {
+      setLoading(true)
       try {
-        let res = await apiRequest({
+        const res = await apiRequest({
           url: '/users/get-user',
-          method: "GET",
-          token: user?.token
+          method: 'GET',
+          token: user?.token,
         })
+        if (!res.success) {
+          toast.error(res.message)
+          setLoading(false)
+          return
+        }
         setInfo(res?.data)
-        setLoading(false)
       } catch (error) {
+        toast.error(error?.message || 'Something went wrong')
+      } finally {
         setLoading(false)
       }
     }
     fetchUserProfile()
-  })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete your profile?')) {
       try {
-        let del = await apiRequest({
+        const del = await apiRequest({
           url: '/users/delete-user',
-          method: "DELETE",
-          token: user?.token
+          method: 'DELETE',
+          token: user?.token,
         })
-        if (del.status === false) {
-          toast.error({ ...del.message })
+        if (!del.success) {
+          toast.error(del.message)
         } else {
           toast.success(del.message)
           dispatch(LogOut())
           window.location.replace('/auth')
         }
       } catch (error) {
-        // Handle error
-        return
+        toast.error(error?.message || 'Something went wrong')
       }
     }
   }
-  return (
-    <div>
-      {
-        loading ? <div className="mt-10 flex justify-center px-40">
-          <AiOutlineLoading3Quarters size={100} className="align-items-center text-purple-200 animate-spin w-full h-full" />
-        </div>
-          : <div>
-             <div className='container mx-auto py-10 flex items-center justify-center pt-20'>
-              <div className='w-full md:w-2/3 2xl:w-2/3 bg-white shadow-lg p-10 pb-20 rounded-lg'>
-                <motion.div
-                 variants={{
-                  hidden: { opacity: 0, x: -75 },
-                  visible: { opacity: 1, x: 0 }
-              }}
-              initial="hidden"
-              animate="visible"
-              transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
-                 className='flex flex-col items-center justify-center mb-4'>
-                  <div className='flex space-x-2 items-center'>
-                  <h1 className='text-4xl font-semibold'>{info?.firstName + " " + info?.LastName}</h1>
-                  {info?.isVerified ===  true
-                      ?<FcApproval className='mt-4'/>
-                    : <MdOutlineVerified className='mt-4'/>
-                  }
-                  </div>
-                  <h4 className='text-purple-600 text-base font-bold mt-1'>{info?.jobTitle || "Add Job Title"}</h4>
-                  <div className='w-full shadow-lg gap-2 flex flex-col md:flex-row justify-start md:justify-between mt-4 md:mt-8 text:sm'>
-                  <Toaster position='top-right' toastOptions={{ duration: 3000 }} />
-                    <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                      <HiLocationMarker />
-                      {info?.location ?? 'No Location'}
-                    </p>
-                    <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                      <AiOutlineMail />
-                      {info?.email ?? "No Emaill"}
-                    </p>
-                    <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                      <FiPhoneCall />
-                      {info?.contact ?? "No Contact"}
-                    </p>
-                  </div>
-                </motion.div>
-                <motion.div
-                 variants={{
-                  hidden: { opacity: 0, x: 75 },
-                  visible: { opacity: 1, x: 0 }
-              }}
-              initial="hidden"
-              animate="visible"
-              transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
-                 className='w-full cursor-pointer  shadow-lg flex flex-col md:flex-row justify-start md:justify-between mt-4 md:mt-8 text:sm'>
-                  <a className='flex  space-x-1  items-center px-2 py-1 rounded-full' href={info?.socialMedia?.linkedin}>
-                    <span>linkedin</span>
-                    <FaLinkedin />
-                  </a>
-                  <a className='flex space-x-1  items-center px-2 py-1 rounded-full' href={info?.socialMedia?.github}>
-                    <span>
-                      Github
-                    </span>
-                    <FaGithub />
-                  </a>
-                  <a className='flex  space-x-1 items-center px-2 py-1 rounded-full' href={info?.socialMedia?.github}>
-                    <span>Facebook</span>
-                    <FaFacebook />
-                  </a>
-                  <a className='flex  space-x-1  items-center px-2 py-1 rounded-full' href={info?.socialMedia?.github}>
-                    <span>Twitter</span>
-                    <FaXTwitter />
-                  </a>
-                  <a className='flex  space-x-1 items-center px-2 py-1 rounded-full' href={info?.socialMedia?.github}>
-                    <span>Portfolio </span>
-                    <BsPersonFill />
-                  </a>
-                </motion.div>
-                <hr />
-                <div className='w-full py-10'>
-                  <div className='w-full flex flex-col-reverse md:flex-row gap-8 py-6'>
-                    <motion.div
-                     variants={{
-                      hidden: { opacity: 0, x: -75 },
-                      visible: { opacity: 1, x: 0 }
-                  }}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
-                     className='w-full md:w-2/3 flex flex-col gap-4 mt-20 md:mt-0'>
-                      <p className='text-purple-800 font-bold text-2xl'>ABOUT</p>
-                      <span className='text-justify leading-7'>{info?.about || "about user"}</span>
-                    </motion.div>
-                    <motion.div
-                     variants={{
-                      hidden: { opacity: 0, y: 75 },
-                      visible: { opacity: 1, y: 0 }
-                  }}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{ duration: 0.5, delay: 0.25, type: 'tween', stiffness: 100 }}
-                     className='w-full md:w-1/3 mt-10  flex flex-col items-center'>
-                      <img src={info?.profileUrl || NoProfile}
-                        className='h-40 w-48  object-container 
-                       rounded-md bg-white' alt={info?.profileUrl || NoProfile} />
-                      <div className='flex text-base  gap-2 mt-10 -ml-8'>
-                        <CustomButton
-                          onClick={() => setOpen(true)}
-                          iconRight={<FiEdit3 />}
-                          title="Edit"
-                          containerStyles={`py-1.5 w-1/2 text-xl font-bold md:px-5 bg-black/60 text-white  px-3 bg-purple-500 
-                             rounded-full mb-4  focus:outline-none hover:bg-white hover:text-purple-900`} />
-                          <CustomButton
-                            onClick={handleDelete}
-                            iconRight={<TiUserDelete />}
-                            title="Delete"
-                            containerStyles={`py-1.5 text-xl h-10 font-bold md:px-5 bg-black/60 text-white  px-3 bg-purple-500
-                                 rounded-full focus:outline-none hover:bg-red-200 hover:text-white`} />
-                      </div>
 
-                    </motion.div>
-                  </div>
+  if (loading) return <LoadingPage message="Loading profile..." />
+
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      <div className="max-w-4xl mx-auto px-4 py-8 pt-24">
+
+        {/* Profile Header Card */}
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: -20 },
+                visible: { opacity: 1, y: 0 },
+              }}
+              initial="hidden"
+              animate="visible"
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="flex flex-col md:flex-row items-center md:items-start gap-6"
+            >
+              {/* Avatar */}
+              <div className="relative flex-shrink-0">
+                <div className="w-28 h-28 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden ring-4 ring-purple-200">
+                  {info?.profileUrl ? (
+                    <img
+                      src={info.profileUrl}
+                      alt={info?.firstName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src={NoProfile}
+                      alt="profile"
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                 </div>
               </div>
-            </div>
-            <div className='w-full mt-20 flex flex-col px-4'>
-              <h1 className='font-bold text-2xl'>Total Job Applied For: <span>{info?.application?.length}</span></h1>
-              <div className=' md:flex flex-wrap gap-4'>
-                {info?.application?.map((job, index) => {
-                  return <div key={index} >
-                    <Link to={`/job-details/${job.job?._id}`}>
-                      <div className='md:w-[20rem] max-w-md
-                       flex md:h-[18rem] h-[18rem] rounded-md px-3 py-5 flex flex-col 
-                        bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
-                       <div className='flex justify-between'>
-                          <div className='flex gap-3'>
-                            <img src={job?.job?.company.profileUrl}
-                              alt={job?.job?.name}
-                              className='w-14 h-14 rounded-lg truncate' />
-                            <div>
-                              <h1 className='text-black text-lg font-semibold'>{job?.job?.company.name}</h1>
-                              <p className='text-black text-lg font-semibold'>{job?.job?.jobTitle}</p>
-                              <p className='text-black text-lg font-semibold'>{job.job?.jobType}</p>
-                              <span className='flex gap-2 items-center text-purple-200'>
-                                <GoLocation className='text-slate-900 text-sm ' />
-                                {job.job?.location}
-                              </span>
-                            </div>
-                          </div>
-                          <h1 className='-mt-5 font-bold  text-purple-400'>{job?.job?.vacancy}</h1>
-                       </div>
-                        <div className=''>
-                          <p className='text-sm text-black font-semibold'>
-                            {job?.job?.detail[0]?.desc?.slice(0, 150) + "..."}
-                          </p>
-                        </div>
 
-                        <div className='flex items-center justify-between mt-4 '>
-                          <p className='bg-purple-200 text-black py-0.5 px-1.5 rounded font-semibold '>{job?.status}</p>
-                          <span className='text-purple-900 text-sm'>${job?.job.salary}</span>
-                        </div>
-                      </div>
-                    </Link>
-                  </div>
-                })}
+              {/* Name / title / meta */}
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap">
+                  <h1 className="text-3xl font-bold text-gray-900">
+                    {info?.firstName} {info?.LastName}
+                  </h1>
+                  {info?.isVerified ? (
+                    <CheckCircle className="w-5 h-5 text-purple-600" />
+                  ) : null}
+                </div>
+                <p className="text-purple-600 font-semibold mt-1">
+                  {info?.jobTitle || 'Add Job Title'}
+                </p>
+
+                <div className="flex flex-wrap gap-4 mt-4 justify-center md:justify-start text-sm text-gray-600">
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-purple-500" />
+                    {info?.location || 'No Location'}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Mail className="w-4 h-4 text-purple-500" />
+                    {info?.email || 'No Email'}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Phone className="w-4 h-4 text-purple-500" />
+                    {info?.contact || 'No Contact'}
+                  </span>
+                </div>
+
+                {/* Social Links */}
+                <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
+                  {info?.socialMedia?.linkedin && (
+                    <a href={info.socialMedia.linkedin} target="_blank" rel="noreferrer">
+                      <Badge variant="secondary" className="flex items-center gap-1 cursor-pointer hover:bg-purple-100">
+                        <Linkedin className="w-3.5 h-3.5" /> LinkedIn
+                      </Badge>
+                    </a>
+                  )}
+                  {info?.socialMedia?.github && (
+                    <a href={info.socialMedia.github} target="_blank" rel="noreferrer">
+                      <Badge variant="secondary" className="flex items-center gap-1 cursor-pointer hover:bg-purple-100">
+                        <Github className="w-3.5 h-3.5" /> GitHub
+                      </Badge>
+                    </a>
+                  )}
+                  {info?.socialMedia?.twitter && (
+                    <a href={info.socialMedia.twitter} target="_blank" rel="noreferrer">
+                      <Badge variant="secondary" className="flex items-center gap-1 cursor-pointer hover:bg-purple-100">
+                        <Twitter className="w-3.5 h-3.5" /> Twitter
+                      </Badge>
+                    </a>
+                  )}
+                  {info?.socialMedia?.facebook && (
+                    <a href={info.socialMedia.facebook} target="_blank" rel="noreferrer">
+                      <Badge variant="secondary" className="flex items-center gap-1 cursor-pointer hover:bg-purple-100">
+                        <Globe className="w-3.5 h-3.5" /> Facebook
+                      </Badge>
+                    </a>
+                  )}
+                  {info?.socialMedia?.portfolio && (
+                    <a href={info.socialMedia.portfolio} target="_blank" rel="noreferrer">
+                      <Badge variant="secondary" className="flex items-center gap-1 cursor-pointer hover:bg-purple-100">
+                        <User className="w-3.5 h-3.5" /> Portfolio
+                      </Badge>
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <UserProfileForm open={open} setOpen={setOpen} />
+              {/* Action buttons */}
+              <div className="flex gap-2 flex-shrink-0">
+                <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+                  <Pencil className="w-4 h-4 mr-1" /> Edit
+                </Button>
+                <Button variant="destructive" size="sm" onClick={handleDelete}>
+                  <Trash2 className="w-4 h-4 mr-1" /> Delete
+                </Button>
+              </div>
+            </motion.div>
+          </CardContent>
+        </Card>
+
+        {/* About Section */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-purple-700 text-lg">About</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-700 leading-relaxed">
+              {info?.about || 'No bio provided yet.'}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* CV / Resume Section */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-purple-700 text-lg">CV / Resume</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {info?.userCv ? (
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="flex items-center gap-3 text-gray-700">
+                  <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
+                    <Briefcase className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <span className="text-sm">Your CV is uploaded and ready for applications.</span>
+                </div>
+                <a
+                  href={info.userCv}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center rounded-md bg-purple-600 text-white hover:bg-purple-700 h-9 px-4 text-sm font-medium transition-colors w-fit"
+                >
+                  View CV
+                </a>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <p className="text-gray-500 text-sm">
+                  No CV uploaded yet. Add one so you can apply for jobs.
+                </p>
+                <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+                  <Upload className="w-4 h-4 mr-1" /> Upload CV
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Applications Section */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Briefcase className="w-5 h-5 text-purple-600" />
+            <h2 className="text-xl font-bold text-gray-800">
+              Jobs Applied For
+              <Badge className="ml-2 bg-purple-100 text-purple-700">
+                {info?.application?.length || 0}
+              </Badge>
+            </h2>
           </div>
-      }
+
+          {info?.application?.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {info.application.map((job, index) => (
+                <Link to={`/job-details/${job.job?._id}`} key={index}>
+                  <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
+                    <CardContent className="pt-4">
+                      <div className="flex justify-between items-start">
+                        <div className="flex gap-3">
+                          <img
+                            src={job?.job?.company?.profileUrl}
+                            alt={job?.job?.company?.name}
+                            className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                          />
+                          <div>
+                            <p className="font-semibold text-gray-900">{job?.job?.company?.name}</p>
+                            <p className="text-gray-700 font-medium">{job?.job?.jobTitle}</p>
+                            <p className="text-sm text-gray-500">{job?.job?.jobType}</p>
+                            <span className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+                              <MapPin className="w-3.5 h-3.5" />
+                              {job?.job?.location}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="text-purple-500 font-bold text-sm flex-shrink-0">
+                          {job?.job?.vacancy} slots
+                        </span>
+                      </div>
+
+                      <p className="text-sm text-gray-600 mt-3 line-clamp-2">
+                        {job?.job?.detail?.[0]?.desc?.slice(0, 150)}...
+                      </p>
+
+                      <div className="flex items-center justify-between mt-3">
+                        <Badge className="bg-purple-100 text-purple-700">{job?.status}</Badge>
+                        <span className="text-purple-900 font-semibold text-sm">
+                          ${job?.job?.salary}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-10 text-center text-gray-500">
+                <Briefcase className="w-10 h-10 mx-auto mb-2 text-gray-300" />
+                No job applications yet.
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+
+      <UserProfileForm />
     </div>
-
-
-
   )
 }

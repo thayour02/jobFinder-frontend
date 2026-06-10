@@ -1,150 +1,232 @@
-import {useCallback, useContext, useEffect} from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { GlobalContext } from '../../context'
-import { useParams } from 'react-router-dom'
-import { FiPhoneCall} from 'react-icons/fi'
-import { Link } from 'react-router-dom'
-import { AiOutlineMail } from 'react-icons/ai'
-import { HiLocationMarker } from 'react-icons/hi'
-import { GoLocation } from 'react-icons/go'
+import { useParams, Link } from 'react-router-dom'
 import moment from 'moment'
-import { useSelector} from 'react-redux'
+import { useSelector } from 'react-redux'
 import { apiRequest } from '../../utils/store'
-
+import { toast } from 'react-hot-toast'
 import { accountType } from '../../utils/data'
-import { FcApproval } from "react-icons/fc";
-import { MdOutlineVerified } from "react-icons/md";
-
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card'
+import { Badge } from '../../components/ui/Badge'
+import { LoadingPage } from '../../components/ui/Loading'
+import {
+    MapPin,
+    Mail,
+    Phone,
+    Globe,
+    Building2,
+    CheckCircle,
+    Briefcase,
+    Calendar,
+    ArrowLeft,
+} from 'lucide-react'
 
 export default function CompanyProfileById() {
-    // const { open, setOpen } = useContext(GlobalContext)
-    const { setLoading } = useContext(GlobalContext)
+    const { setLoading, loading } = useContext(GlobalContext)
     const { info, setInfo } = useContext(GlobalContext)
-
     const params = useParams()
     const { user } = useSelector((state) => state.user)
 
-    const fetchCompany = useCallback( async () => {
+    const fetchCompany = useCallback(async () => {
         setLoading(true)
-        let id = params?.id || user?._id;
-       
-        try {
-            let res = await apiRequest({
-                url: `/get-company/${id}`,
-                method: "GET",
-            })
-            if (res?.success && res?.data) {
-                setInfo(res?.data)
-            } else {
-                setInfo(null)
-            }
-            setLoading(false)
-        } catch (error) {
+        const id = params?.id || user?._id
+        const res = await apiRequest({
+            url: `/get-company/${id}`,
+            method: 'GET',
+        })
+        if (!res.success) {
+            toast.error(res.message)
             setInfo(null)
             setLoading(false)
-            console.error('Error fetching company:', error)
+            return
         }
-    },[params?.id, user?._id])
-    useEffect(() => {
-        fetchCompany();
-    },[fetchCompany])
+        setInfo(res?.data)
+        setLoading(false)
+    }, [params?.id, user?._id])
 
-    
-    return (
-        <div className='conatiner mx-auto p-5'>
-            {!info ? (
-                <div className='flex flex-col items-center justify-center py-16'>
-                    <div className='text-center'>
-                        <h2 className='text-2xl font-bold text-gray-900 mb-4'>Company Not Found</h2>
-                        <p className='text-gray-600 mb-6 max-w-md'>
+    useEffect(() => {
+        fetchCompany()
+    }, [fetchCompany])
+
+    if (loading) return <LoadingPage message="Loading company..." />
+
+    if (!info) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+                <Card className="max-w-md w-full text-center">
+                    <CardContent className="p-10">
+                        <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Building2 className="w-10 h-10 text-purple-400" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-3">Company Not Found</h2>
+                        <p className="text-gray-500 mb-6">
                             The company profile you're looking for doesn't exist or has been removed.
                         </p>
-                        <Link 
-                            to='/company'
-                            className='inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors'
+                        <Link
+                            to="/company"
+                            className="inline-flex items-center gap-2 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium"
                         >
+                            <ArrowLeft className="w-4 h-4" />
                             Browse Companies
                         </Link>
-                    </div>
-                </div>
-            ) : (
-                <>
-                    <div className='w-full flex justify-between flex-col md:flex-row gap-3 pt-20'>
-                        <div className='flex items-center'>
-                            <h2 className='text-xl font-semibold'>{info?.name}</h2>
-                            {info?.isVerified === true
-                                ? <FcApproval className='' />
-                                : <MdOutlineVerified className='' />
-                            }
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50 py-8 pt-20">
+            <div className="max-w-4xl mx-auto px-4 space-y-6">
+                {/* Company Header */}
+                <Card>
+                    <CardContent className="p-8">
+                        <div className="flex flex-col md:flex-row gap-6 items-start">
+                            {/* Logo / Avatar */}
+                            <div className="flex-shrink-0 self-center md:self-start">
+                                <div className="w-24 h-24 rounded-full overflow-hidden bg-purple-100 flex items-center justify-center">
+                                    {info?.profileUrl ? (
+                                        <img
+                                            src={info.profileUrl}
+                                            alt={info.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <Building2 className="w-12 h-12 text-purple-400" />
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex-1">
+                                <div className="flex flex-wrap items-center gap-2 mb-2">
+                                    <h1 className="text-3xl font-bold text-gray-900">{info?.name}</h1>
+                                    {info?.isVerified && (
+                                        <CheckCircle className="w-6 h-6 text-purple-600" />
+                                    )}
+                                </div>
+
+                                {info?.url && (
+                                    <a
+                                        href={info.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 text-purple-600 hover:text-purple-800 hover:underline mb-4 text-sm font-medium"
+                                    >
+                                        <Globe className="w-4 h-4" />
+                                        {info.url}
+                                    </a>
+                                )}
+
+                                <div className="flex flex-wrap gap-3 mt-3">
+                                    {info?.location && (
+                                        <Badge variant="secondary" className="flex items-center gap-1 py-1 px-3">
+                                            <MapPin className="w-3 h-3" />
+                                            {info.location}
+                                        </Badge>
+                                    )}
+                                    {info?.email && (
+                                        <Badge variant="secondary" className="flex items-center gap-1 py-1 px-3">
+                                            <Mail className="w-3 h-3" />
+                                            {info.email}
+                                        </Badge>
+                                    )}
+                                    {info?.contact && (
+                                        <Badge variant="secondary" className="flex items-center gap-1 py-1 px-3">
+                                            <Phone className="w-3 h-3" />
+                                            {info.contact}
+                                        </Badge>
+                                    )}
+                                </div>
+
+                                <div className="mt-4 flex items-center gap-2">
+                                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                        <Briefcase className="w-5 h-5 text-purple-600" />
+                                    </div>
+                                    <div>
+                                        <p className="text-2xl font-bold text-purple-600">{info?.jobPosts?.length ?? 0}</p>
+                                        <p className="text-xs text-gray-500 font-medium">Job Posts</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <Link to={info?.url}>{info?.url || <span>No company website</span>}</Link>
-                    </div>
-                    <div className='w-full flex flex-col md:flex-row justify-start md:justify-between mt-4 md:mt-8 text:sm'>
-                        <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                            <HiLocationMarker />
-                            {info?.location ?? 'No Location'}
-                        </p>
-                        <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                            <AiOutlineMail />
-                            {info?.email ?? "No Emaill"}
-                        </p>
-                        <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                            <FiPhoneCall />
-                            {info?.contact ?? "No Contact"}
-                        </p>
-                    </div>
-                    <div className='flex flex-col items-center mt-10 md:mt-0'>
-                        <span className='text-xl'>{info?.jobPosts?.length}</span>
-                        <p className='text-purple-500'>Job Post</p>
-                    </div>
-                    <div className='w-full mt-20 flex flex-col'>
-                        <p className='font-bold'>Job Posted:</p>
-                        <div className='grid md:grid-cols-3 gap-4 '>
-                            {
-                                info?.jobPosts?.map((job, index) => {
-                                    return (
-                                        <Link key={index} to={`/job-details/${job?._id}`}>
-                                            <div className=' md:w-[20rem] max-w-md
-                               flex md:h-[18rem] h-[18rem] rounded-md px-3 py-5 flex flex-col 
-                                bg-white justify-between shadow-lg mt-4 rounded-md px-3 py-5 relative'>
-                                                <div className='flex justify-between'>
-                                                    <div className='flex gap-3'>
-                                                        <img src={info?.profileUrl}
-                                                            alt={job?.name}
-                                                            className='w-14 h-14 rounded-lg truncate' />
-                                                        <div>
-                                                            <p className='text-black text-lg font-semibold'>{job?.jobTitle}</p>
-                                                            <p className='text-black text-lg font-semibold'>{job?.jobType}</p>
-                                                            <span className='flex gap-2 items-center text-purple-200'>
-                                                                <GoLocation className='text-slate-900 text-sm ' />
-                                                                {job?.location}
-                                                            </span>
+                    </CardContent>
+                </Card>
+
+                {/* Job Postings */}
+                {info?.jobPosts?.length > 0 && (
+                    <div>
+                        <h2 className="text-xl font-bold text-gray-900 mb-4">Job Postings</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {info.jobPosts.map((job, index) => (
+                                <Link key={index} to={`/job-details/${job?._id}`}>
+                                    <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+                                        <CardContent className="p-5 flex flex-col justify-between h-full gap-4">
+                                            {/* Top row */}
+                                            <div className="flex items-start justify-between gap-2">
+                                                <div className="flex gap-3 items-start">
+                                                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-purple-100 flex-shrink-0 flex items-center justify-center">
+                                                        {info?.profileUrl ? (
+                                                            <img
+                                                                src={info.profileUrl}
+                                                                alt={info.name}
+                                                                className="w-full h-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <Building2 className="w-6 h-6 text-purple-400" />
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-gray-900 font-semibold leading-tight">{job?.jobTitle}</p>
+                                                        <div className="flex items-center gap-1 text-gray-500 text-xs mt-0.5">
+                                                            <MapPin className="w-3 h-3" />
+                                                            {job?.location}
                                                         </div>
                                                     </div>
-                                                    {accountType !== "Seeker" && info._id === user._id
-                                                        ? <h1 className='font-bold text-red-500 -mt-5 font-bold '>{
-                                                            job?.application.length > 0 ? job?.application.length : ""
-                                                        }</h1>
-                                                        : <h1 className='font-bold text-green-500 -mt-5 font-bold '>{job?.vacancy}</h1>
-                                                    }
                                                 </div>
-                                                <div className=''>
-                                                    <p className='text-sm text-black font-semibold'>
-                                                        {job?.detail[0]?.desc?.slice(0, 150) + "..."}
-                                                    </p>
-                                                </div>
-                                                <div className='flex items-center justify-between'>
-                                                    <p className='bg-purple-200 text-black py-0.5 px-1.5 rounded font-semibold '>{job?.jobType}</p>
-                                                    <span className='text-purple-900 text-sm'>{moment(job?.createdAt).fromNow()}</span>
-                                                </div>
+                                                {accountType !== 'Seeker' && info._id === user?._id ? (
+                                                    <Badge variant="destructive" className="text-xs flex-shrink-0">
+                                                        {job?.application?.length > 0 ? job.application.length : '0'} apps
+                                                    </Badge>
+                                                ) : (
+                                                    <Badge variant="success" className="text-xs flex-shrink-0">
+                                                        {job?.vacancy} open
+                                                    </Badge>
+                                                )}
                                             </div>
-                                        </Link>
-                                    )
-                                })
-                            }
+
+                                            {/* Description */}
+                                            <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
+                                                {job?.detail?.[0]?.desc?.slice(0, 150)}
+                                                {job?.detail?.[0]?.desc?.length > 150 ? '...' : ''}
+                                            </p>
+
+                                            {/* Footer */}
+                                            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                                                <Badge variant="secondary">{job?.jobType}</Badge>
+                                                <span className="text-xs text-gray-400 flex items-center gap-1">
+                                                    <Calendar className="w-3 h-3" />
+                                                    {moment(job?.createdAt).fromNow()}
+                                                </span>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </Link>
+                            ))}
                         </div>
                     </div>
-                </>
-            )}
+                )}
+
+                {info?.jobPosts?.length === 0 && (
+                    <Card>
+                        <CardContent className="p-10 text-center">
+                            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Briefcase className="w-8 h-8 text-purple-400" />
+                            </div>
+                            <p className="text-gray-500 font-medium">No job postings yet</p>
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
         </div>
     )
 }

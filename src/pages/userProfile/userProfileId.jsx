@@ -1,134 +1,164 @@
-
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { GlobalContext } from '../../context'
-import { HiLocationMarker } from 'react-icons/hi'
-import { AiOutlineMail } from 'react-icons/ai'
-import { FiPhoneCall } from 'react-icons/fi'
-import { apiRequest } from "../../utils/store"
-import ProfileImage from '../../component/ProfileImage'
-import { AiOutlineLoading3Quarters } from "react-icons/ai"
-import { BsPersonFill } from "react-icons/bs";
-import { FaGithub, FaLinkedin, FaFacebook } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
-import NoProfile from '../../assets/images.jpeg'
-import { toast } from "react-hot-toast"
 import { useParams } from 'react-router-dom'
-import { useEffect } from 'react'
-import { FcApproval } from "react-icons/fc";
-import { MdOutlineVerified } from "react-icons/md"
-
+import { toast } from 'react-hot-toast'
+import { apiRequest } from '../../utils/store'
+import NoProfile from '../../assets/images.jpeg'
+import { Card, CardContent } from '../../components/ui/Card'
+import { Badge } from '../../components/ui/Badge'
+import { LoadingPage } from '../../components/ui/Loading'
+import {
+    User,
+    MapPin,
+    Mail,
+    Phone,
+    CheckCircle,
+    Briefcase,
+} from 'lucide-react'
+import { FaLinkedin as Linkedin, FaGithub as Github, FaTwitter as Twitter } from 'react-icons/fa'
 
 export default function UserProfileId() {
     const { loading, setLoading } = useContext(GlobalContext)
     const { info, setInfo } = useContext(GlobalContext)
     const { user } = useSelector((state) => state.user)
-
     const params = useParams()
+
     const fetchUser = useCallback(async () => {
-        setLoading(true);
-        try {
-            const id = params?.id || user?._id;
-            const res = await apiRequest({
-                url: `/users/get-user/${id}`,
-                method: "GET",
-            });
-            if (res?.status === false) {
-                toast.error(res.error)
-                setLoading(false)
-            } else {
-                toast.success(res.message)
-                setInfo(res?.data)
-            }
+        setLoading(true)
+        const id = params?.id || user?._id
+        const res = await apiRequest({
+            url: `/users/get-user/${id}`,
+            method: 'GET',
+        })
+        if (!res.success) {
+            toast.error(res.message)
             setLoading(false)
-        } catch (error) {
-            setLoading(false);
-            return error
+            return
         }
-    },[params?.id ,user?._id])
-   
+        setInfo(res?.data)
+        setLoading(false)
+    }, [params?.id, user?._id])
+
     useEffect(() => {
-        fetchUser();
-    },[fetchUser]);
+        fetchUser()
+    }, [fetchUser])
+
+    if (loading) return <LoadingPage message="Loading profile..." />
 
     return (
-        <div>
-            {loading ? <div className="mt-10 flex justify-center px-40" disabled={loading}>
-                <AiOutlineLoading3Quarters size={100} className="align-items-center text-purple-200 animate-spin w-full h-full pt-20" />
-            </div>
-                :
-                <div className='container  mx-auto py-10 flex items-center justify-center pt-20'>
-                    <div className='w-full md:w-2/3 2xl:w-2/3 bg-white shadow-lg p-10 pb-20 rounded-lg'>
-                        <div className='flex flex-col items-center justify-center mb-8'>
-                            <h1>Hello👋</h1>
-                            <h1 className='text-4xl font-semibold'>{info?.firstName + " " + info?.LastName}</h1>
-                  {info?.isVerified ===  true
-                      ?<FcApproval className='mt-4'/>
-                    : <MdOutlineVerified className='mt-4'/>
-                  }
-                            <h4 className='text-purple-600 text-base font-bold mt-1'>{info?.jobTitle || "Add Job Title"}</h4>
-                            <div className='w-full shadow-lg gap-2 flex flex-col md:flex-row justify-start md:justify-between mt-4 md:mt-8 text:sm'>
-                                <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                                    <HiLocationMarker />
-                                    {info?.location ?? 'No Location'}
-                                </p>
-                                <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                                    <AiOutlineMail />
-                                    {info?.email ?? "No Emaill"}
-                                </p>
-                                <p className='flex gap-2 items-center px-3 py-1 rounded-full'>
-                                    <FiPhoneCall />
-                                    {info?.contact ?? "No Contact"}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className=' cursor-pointer shadow-lg gap-1 flex flex-col md:flex-row justify-start md:justify-between mt-4 -ml-8 md:mt-8 text:sm'>
-                            <a className='flex space-x-1 items-center px-3 py-1 rounded-full' href={info?.socialMedia?.linkedin}>
-                                <span>linkedin</span>
-                                <FaLinkedin />
-                            </a>
-                            <a className='flex space-x-1 items-center px-3 py-1 rounded-full' href={info?.socialMedia?.github}>
-                                <span>
-                                    Github
-                                </span>
-                                <FaGithub />
-                            </a>
-                            <a className='flex  space-x-1  items-center px-3 py-1 rounded-full' href={info?.socialMedia?.github}>
-                                <span>Facebook</span>
-                                <FaFacebook />
-                            </a>
-                            <a className='flex  space-x-0.5  items-center px-3 py-1 rounded-full' href={info?.socialMedia?.github}>
-                                <span>Twitter</span>
-                                <FaXTwitter />
-                            </a>
-                            <a className='flex  space-x-0.5 items-center px-3 py-1 rounded-full' href={info?.socialMedia?.github}>
-                                <span>Portfolio </span>
-                                <BsPersonFill />
-                            </a>
-                        </div>
-                        <hr />
-                        <div className='w-full py-10'>
-                            <div className='w-full flex flex-col-reverse md:flex-row gap-8 py-6'>
-                                <div className='w-full md:w-2/3 flex flex-col gap-4 mt-20 md:mt-0'>
-                                    <p className='text-purple-800 font-bold text-2xl'>ABOUT</p>
-                                    <span className='text-justify leading-7'>{info?.about || "about user"}</span>
+        <div className="min-h-screen bg-gray-50 py-8 pt-20">
+            <div className="max-w-4xl mx-auto px-4">
+                {/* Header Card */}
+                <Card className="mb-6">
+                    <CardContent className="p-8">
+                        <div className="flex flex-col md:flex-row gap-8 items-start">
+                            {/* Avatar */}
+                            <div className="flex-shrink-0 self-center md:self-start">
+                                <div className="w-32 h-32 rounded-full overflow-hidden bg-purple-100 flex items-center justify-center">
+                                    {info?.profileUrl ? (
+                                        <img
+                                            src={info.profileUrl}
+                                            alt={`${info?.firstName} ${info?.LastName}`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <User className="w-16 h-16 text-purple-400" />
+                                    )}
                                 </div>
-                                <div className='w-full md:w-1/3 flex flex-col items-center'>
-                                    <img src={info?.profileUrl || NoProfile}
-                                        className='h-40 w-48  object-container 
-                                         rounded-md bg-white' alt={info?.profileUrl || NoProfile} />
-                                    <div>
+                            </div>
+
+                            {/* Info */}
+                            <div className="flex-1 text-center md:text-left">
+                                <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+                                    <h1 className="text-3xl font-bold text-gray-900">
+                                        {info?.firstName} {info?.LastName}
+                                    </h1>
+                                    {info?.isVerified && (
+                                        <CheckCircle className="w-6 h-6 text-purple-600 self-center" />
+                                    )}
+                                </div>
+
+                                {info?.jobTitle && (
+                                    <div className="flex items-center gap-2 justify-center md:justify-start mb-4">
+                                        <Briefcase className="w-4 h-4 text-purple-600" />
+                                        <span className="text-purple-600 font-semibold">{info.jobTitle}</span>
                                     </div>
+                                )}
+
+                                {/* Contact row */}
+                                <div className="flex flex-wrap gap-3 justify-center md:justify-start mt-4">
+                                    {info?.location && (
+                                        <Badge variant="secondary" className="flex items-center gap-1 text-sm py-1 px-3">
+                                            <MapPin className="w-3 h-3" />
+                                            {info.location}
+                                        </Badge>
+                                    )}
+                                    {info?.email && (
+                                        <Badge variant="secondary" className="flex items-center gap-1 text-sm py-1 px-3">
+                                            <Mail className="w-3 h-3" />
+                                            {info.email}
+                                        </Badge>
+                                    )}
+                                    {info?.contact && (
+                                        <Badge variant="secondary" className="flex items-center gap-1 text-sm py-1 px-3">
+                                            <Phone className="w-3 h-3" />
+                                            {info.contact}
+                                        </Badge>
+                                    )}
+                                </div>
+
+                                {/* Social links */}
+                                <div className="flex flex-wrap gap-3 justify-center md:justify-start mt-4">
+                                    {info?.socialMedia?.linkedin && (
+                                        <a
+                                            href={info.socialMedia.linkedin}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors text-sm font-medium"
+                                        >
+                                            <Linkedin className="w-4 h-4" />
+                                            LinkedIn
+                                        </a>
+                                    )}
+                                    {info?.socialMedia?.github && (
+                                        <a
+                                            href={info.socialMedia.github}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors text-sm font-medium"
+                                        >
+                                            <Github className="w-4 h-4" />
+                                            GitHub
+                                        </a>
+                                    )}
+                                    {info?.socialMedia?.twitter && (
+                                        <a
+                                            href={info.socialMedia.twitter}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors text-sm font-medium"
+                                        >
+                                            <Twitter className="w-4 h-4" />
+                                            Twitter
+                                        </a>
+                                    )}
                                 </div>
                             </div>
-
                         </div>
-                    </div>
-                </div>
-            }
+                    </CardContent>
+                </Card>
+
+                {/* About Card */}
+                {info?.about && (
+                    <Card>
+                        <CardContent className="p-8">
+                            <h2 className="text-xl font-bold text-purple-800 mb-4 uppercase tracking-wide">About</h2>
+                            <p className="text-gray-700 leading-7 text-justify">{info.about}</p>
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
         </div>
-
-
     )
 }
